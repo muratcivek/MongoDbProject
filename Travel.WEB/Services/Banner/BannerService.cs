@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using AutoMapper;
+using MongoDB.Driver;
 using Travel.WEB.DTOs.BannerDTOs;
 using Travel.WEB.Entities;
 using Travel.WEB.Settings;
@@ -8,37 +9,56 @@ namespace Travel.WEB.Services.Banner
     public class BannerService : IBannerService
     {
         private readonly IMongoCollection<Travel.WEB.Entities.Banner> _bannerCollection;
+        private readonly IMapper _mapper;
 
-        public BannerService(IDatabaseSettings databaseSettings )
+        public BannerService(IDatabaseSettings databaseSettings, IMapper mapper)
         {
             var client = new MongoClient(databaseSettings.ConnectionString);
             var database = client.GetDatabase(databaseSettings.DatabaseName);
-            _bannerCollection = database.GetCollection<Travel.WEB.Entities.Banner>(databaseSettings.BannerCollectionName);
+
+            _bannerCollection =
+                database.GetCollection<Travel.WEB.Entities.Banner>(
+                    databaseSettings.BannerCollectionName);
+
+            _mapper = mapper;
         }
 
-        Task IBannerService.CreateAsync(CreateBannerDto createBannerDto)
+        public async Task CreateAsync(CreateBannerDto createBannerDto)
         {
-            throw new NotImplementedException();
+            var banner = _mapper.Map<Travel.WEB.Entities.Banner>(createBannerDto);
+
+            await _bannerCollection.InsertOneAsync(banner);
         }
 
-        Task IBannerService.DeleteAsync(string id)
+        public async Task DeleteAsync(string id)
         {
-            throw new NotImplementedException();
+            await _bannerCollection.DeleteOneAsync(b => b.Id == id);
         }
 
-        Task<List<ResultBannerDto>> IBannerService.GetAllAsync()
+        public async Task<List<ResultBannerDto>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var banners = await _bannerCollection
+                  .Find(x => true)
+                  .ToListAsync();
+
+            return _mapper.Map<List<ResultBannerDto>>(banners);
         }
 
-        Task<ResultBannerDto> IBannerService.GetByIdAsync(string id)
+        public async Task<ResultBannerDto> GetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var banner = await _bannerCollection
+                .Find(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            return _mapper.Map<ResultBannerDto>(banner);
         }
 
-        Task IBannerService.UpdateAsync(UpdateBannerDto updateBannerDto)
+        public async Task UpdateAsync(UpdateBannerDto updateBannerDto)
         {
-            throw new NotImplementedException();
+            var banner = _mapper.Map<Travel.WEB.Entities.Banner>(updateBannerDto);
+
+            await _bannerCollection
+                .ReplaceOneAsync(x => x.Id == updateBannerDto.Id, banner);
         }
     }
 }

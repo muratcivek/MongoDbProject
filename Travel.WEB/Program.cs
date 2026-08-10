@@ -1,15 +1,24 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Options;
+using System.Reflection;
+using Travel.WEB.Services.Banner;
 using Travel.WEB.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+builder.Services.AddFluentValidationAutoValidation()
+    .AddFluentValidationClientsideAdapters()
+    .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 builder.Services.AddSingleton<IDatabaseSettings>(sp =>
 {
     return sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
 });
+builder.Services.AddScoped<IBannerService, BannerService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -30,6 +39,10 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

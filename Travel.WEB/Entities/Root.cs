@@ -1,6 +1,8 @@
-﻿namespace Travel.WEB.Entities
+﻿using Travel.WEB.Entities.Common;
+
+namespace Travel.WEB.Entities
 {
-    public class Root
+    public class Root:BaseEntity
     {
         public string City { get; set; }
         public string Country { get; set; }
