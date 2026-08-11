@@ -11,6 +11,7 @@ namespace Travel.WEB.Mappings
             CreateMap<Banner, ResultBannerDto>().ReverseMap();
             CreateMap<Banner, CreateBannerDto>().ReverseMap();
             CreateMap<Banner, UpdateBannerDto>().ReverseMap();
+            CreateMap<ResultBannerDto, UpdateBannerDto>().ReverseMap();
         }
     }
 }

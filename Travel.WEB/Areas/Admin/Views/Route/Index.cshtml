@@ -1,0 +1,66 @@
+﻿@using Travel.WEB.DTOs.RouteDTOs
+@model List<ResultRouteDto>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+
+<h1>Rotalar</h1>
+
+<table class="table table-bordered table-hover">
+    @{
+        int count = 0;
+    }
+
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Görsel</th>
+            <th>Ülke</th>
+            <th>Şehir</th>
+            <th>Tur Süresi</th>
+            <th>Fiyat</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            count++;
+
+            <tr>
+                <td>@count</td>
+
+                <td>
+                    <img src="@item.ImageUrl"
+                         style="height:75px;width:75px;object-fit:cover"
+                         alt="@item.City" />
+                </td>
+
+                <td>@item.Country</td>
+                <td>@item.City</td>
+                <td>@item.Duration</td>
+                <td>@item.Price €</td>
+
+                <td>
+                    <a asp-action="Delete"
+                       asp-controller="Route"
+                       asp-route-id="@item.Id"
+                       class="btn btn-outline-danger">
+                        Sil
+                    </a>
+
+                    <a href="/Admin/Route/Update/@item.Id"
+                       class="btn btn-outline-info">
+                        Güncelle
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="/Admin/Route/Create"
+   class="btn btn-outline-dark">
+    Yeni Rota Ekle
+</a>

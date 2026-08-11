@@ -2,7 +2,7 @@
 
 namespace Travel.WEB.Entities
 {
-    public class Root:BaseEntity
+    public class Route:BaseEntity
     {
         public string City { get; set; }
         public string Country { get; set; }

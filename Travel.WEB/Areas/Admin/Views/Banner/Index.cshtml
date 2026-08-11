@@ -61,15 +61,17 @@
                                     ? item.Description.Substring(0, 50) + "..."
                                     : item.Description)
                             </td>
-
-                            <td class="text-center">
-                                <a href="#"
-                                   class="btn btn-outline-danger btn-sm me-1">
+                            <td>
+                                <a asp-action="Delete"
+                                   asp-controller="Banner"
+                                   asp-area="Admin"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-outline-danger">
                                     Sil
                                 </a>
 
-                                <a href="#"
-                                   class="btn btn-outline-primary btn-sm">
+                                <a href="/Admin/Banner/Update/@item.Id"
+                                   class="btn btn-outline-info">
                                     Güncelle
                                 </a>
                             </td>
