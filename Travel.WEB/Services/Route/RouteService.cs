@@ -31,7 +31,9 @@ namespace Travel.WEB.Services.Route
 
         public async Task DeleteAsync(string id)
         {
-            await _routesCollection.DeleteOneAsync(id);
+            var filter = Builders<Entities.Route>.Filter.Eq(r => r.Id, id);
+
+            await _routesCollection.DeleteOneAsync(filter);
         }
 
         public async Task<List<ResultRouteDto>> GetAllAsync()
@@ -43,7 +45,14 @@ namespace Travel.WEB.Services.Route
 
         public async Task<List<ResultRouteDto>> GetAllByCityAsync(string city)
         {
-            var routes = await _routesCollection.Find(r => r.City == city).ToListAsync();
+            var filter = Builders<Entities.Route>.Filter.Regex(
+                r => r.City,
+                new MongoDB.Bson.BsonRegularExpression(city.Trim(), "i")
+            );
+
+            var routes = await _routesCollection
+                .Find(filter)
+                .ToListAsync();
 
             return mapper.Map<List<ResultRouteDto>>(routes);
         }
