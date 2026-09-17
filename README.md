@@ -109,6 +109,54 @@ Projede MongoDB'nin temel ve ileri seviye özellikleri uygulamalı olarak kullan
 - Explain Plan ile sorgu analizi
 - `IXSCAN` ve `COLLSCAN` karşılaştırması
 
+MongoDB
+│
+├── Veri Modelleme                → Verinin MongoDB'de nasıl tutulacağını belirler
+│   ├── Document                  → JSON benzeri tek bir kayıt yapısı
+│   ├── Embedded Document         → Bir document içinde başka document tutma
+│   ├── Array                     → Tek alan içinde birden fazla değer tutma
+│   └── Reference                 → Başka collection'daki kaydın ID'sini tutma
+│
+├── CRUD                          → Temel veri ekleme, okuma, güncelleme, silme işlemleri
+│   ├── Create                    → Yeni document ekleme
+│   ├── Read                      → Document sorgulama ve listeleme
+│   ├── Update                    → Mevcut document üzerinde değişiklik yapma
+│   │    ├── $set                 → Bir alanın değerini günceller
+│   │    ├── $addToSet            → Array'e tekrar etmeyecek şekilde eleman ekler
+│   │    └── $pull                → Array içinden belirli bir elemanı siler
+│   └── Delete                    → Document silme
+│
+├── Query                         → Verileri belirli koşullara göre filtreleme
+│   ├── $eq                       → Eşittir
+│   ├── $ne                       → Eşit değildir
+│   ├── $gte                      → Büyük veya eşittir
+│   ├── $lte                      → Küçük veya eşittir
+│   ├── Regex                     → Metin içinde desen bazlı arama yapar
+│   └── Text Search               → Text index kullanarak kelime bazlı arama yapar
+│
+├── Pagination                    → Verileri sayfa sayfa getirme
+│   ├── Skip                      → Belirli sayıda kaydı atlar
+│   └── Limit                     → Döndürülecek maksimum kayıt sayısını belirler
+│
+├── Index                         → Sorguların daha hızlı çalışmasını sağlar
+│   ├── Single                    → Tek alan üzerinde oluşturulan index
+│   ├── Compound                  → Birden fazla alanı birlikte indexler
+│   ├── Unique                    → Aynı değerin tekrar eklenmesini engeller
+│   └── Text                      → Metinsel aramalar için kullanılan index
+│
+├── Aggregation                   → Verileri aşama aşama işleme ve analiz etme
+│   ├── $match                    → Kayıtları koşula göre filtreler
+│   ├── $group                    → Kayıtları belirli bir alana göre gruplar
+│   ├── $sum                      → Sayma veya toplama işlemi yapar
+│   ├── $lookup                   → Farklı collection'lar arasında veri birleştirir
+│   ├── $unwind                   → Array içindeki elemanları ayrı kayıtlara açar
+│   └── $project                  → Sonuçta hangi alanların döneceğini belirler
+│
+└── Performance                   → Sorguların nasıl çalıştığını ve hızını analiz etme
+    └── Explain                   → MongoDB'nin sorguyu nasıl çalıştırdığını gösterir
+         ├── COLLSCAN             → Collection içindeki kayıtları tarar, index kullanılmaz
+         └── IXSCAN               → Index üzerinden tarama yapar
+
 ---
 
 ## 🗂️ Veri Modeli
