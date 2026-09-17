@@ -110,7 +110,6 @@ Projede MongoDB'nin temel ve ileri seviye özellikleri uygulamalı olarak kullan
 - `IXSCAN` ve `COLLSCAN` karşılaştırması
 
 ```text
-
 MongoDB
 │
 ├── Veri Modelleme                → Verinin MongoDB'de nasıl tutulacağını belirler
