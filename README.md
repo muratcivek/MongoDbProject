@@ -109,6 +109,8 @@ Projede MongoDB'nin temel ve ileri seviye özellikleri uygulamalı olarak kullan
 - Explain Plan ile sorgu analizi
 - `IXSCAN` ve `COLLSCAN` karşılaştırması
 
+```text
+
 MongoDB
 │
 ├── Veri Modelleme                → Verinin MongoDB'de nasıl tutulacağını belirler
@@ -156,7 +158,7 @@ MongoDB
     └── Explain                   → MongoDB'nin sorguyu nasıl çalıştırdığını gösterir
          ├── COLLSCAN             → Collection içindeki kayıtları tarar, index kullanılmaz
          └── IXSCAN               → Index üzerinden tarama yapar
-
+```
 ---
 
 ## 🗂️ Veri Modeli
