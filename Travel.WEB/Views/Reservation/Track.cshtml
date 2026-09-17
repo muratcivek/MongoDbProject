@@ -1,0 +1,261 @@
+﻿@model Travel.WEB.Models.Public.ReservationTrackViewModel
+
+@{
+    ViewData["Title"] = "Rezervasyonum";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<section class="travel-detail">
+
+    <div class="travel-container">
+
+        <div style="
+            max-width:760px;
+            margin:0 auto;">
+
+            <div class="travel-card">
+
+                <h2>
+                    Rezervasyonunu Görüntüle
+                </h2>
+
+                <p class="travel-card-description">
+                    Rezervasyon kodunuzu ve rezervasyon sırasında
+                    kullandığınız e-mail adresini girin.
+                </p>
+
+
+                <form asp-controller="Reservation"
+                      asp-action="Track"
+                      method="post">
+
+                    <div class="travel-form-grid">
+
+                        <div class="travel-form-group">
+
+                            <label class="travel-label">
+                                Rezervasyon Kodu
+                            </label>
+
+                            <input asp-for="Search.ReservationCode"
+                                   class="travel-input"
+                                   placeholder="Örn: TRV-A12BC34D" />
+
+                        </div>
+
+
+                        <div class="travel-form-group">
+
+                            <label class="travel-label">
+                                E-mail
+                            </label>
+
+                            <input asp-for="Search.Email"
+                                   type="email"
+                                   class="travel-input"
+                                   placeholder="ornek@mail.com" />
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="travel-form-actions">
+
+                        <button type="submit"
+                                class="travel-btn travel-btn-primary">
+
+                            Rezervasyonumu Bul
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            @if (Model.Searched &&
+                        Model.Reservation == null)
+            {
+                <div class="travel-alert travel-alert-danger">
+
+                    Bu rezervasyon kodu ve e-mail adresiyle
+                    eşleşen bir rezervasyon bulunamadı.
+
+                </div>
+            }
+
+
+            @if (Model.Reservation != null)
+            {
+                var reservation =
+                Model.Reservation;
+
+                var statusText =
+                reservation.Status switch
+                {
+                    "Approved" => "Onaylandı",
+                    "Cancelled" => "İptal Edildi",
+                    _ => "Onay Bekliyor"
+                };
+
+
+                <div class="travel-card">
+
+                    <h2>
+                        Rezervasyon Detayı
+                    </h2>
+
+                    <p class="travel-card-description">
+
+                        Rezervasyon Kodu:
+                        <strong>
+                            @reservation.ReservationCode
+                        </strong>
+
+                    </p>
+
+
+                    <div class="travel-detail-data">
+
+                        <div class="travel-detail-data-item">
+
+                            <span>
+                                Tur
+                            </span>
+
+                            <strong>
+
+                                @if (Model.Route != null)
+                                {
+                                    @($"{Model.Route.City}, {Model.Route.Country}")
+                                }
+                                else
+                                {
+                                    @("Rota bulunamadı")
+                                }
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="travel-detail-data-item">
+
+                            <span>
+                                Durum
+                            </span>
+
+                            <strong>
+                                @statusText
+                            </strong>
+
+                        </div>
+
+
+                        <div class="travel-detail-data-item">
+
+                            <span>
+                                Seyahat Tarihi
+                            </span>
+
+                            <strong>
+                                @(reservation.TravelDate.ToString("dd.MM.yyyy"))
+                            </strong>
+
+                        </div>
+
+
+                        <div class="travel-detail-data-item">
+
+                            <span>
+                                Kişi Sayısı
+                            </span>
+
+                            <strong>
+
+                                @reservation.PersonCount kişi
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="travel-detail-data-item">
+
+                            <span>
+                                Ad Soyad
+                            </span>
+
+                            <strong>
+                                @reservation.FullName
+                            </strong>
+
+                        </div>
+
+
+                        <div class="travel-detail-data-item">
+
+                            <span>
+                                Telefon
+                            </span>
+
+                            <strong>
+                                @reservation.Phone
+                            </strong>
+
+                        </div>
+
+
+                        <div class="travel-detail-data-item">
+
+                            <span>
+                                E-mail
+                            </span>
+
+                            <strong>
+                                @reservation.Email
+                            </strong>
+
+                        </div>
+
+
+                        <div class="travel-detail-data-item">
+
+                            <span>
+                                Oluşturulma Tarihi
+                            </span>
+
+                        <strong>
+                            @(reservation.CreatedDate
+                                                        .ToLocalTime()
+                                                        .ToString("dd.MM.yyyy HH:mm"))
+                        </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (Model.Route != null)
+                    {
+                        <a asp-controller="Tour"
+                           asp-action="Detail"
+                           asp-route-id="@Model.Route.Id"
+                           class="travel-btn travel-btn-light">
+
+                            Turu Görüntüle
+
+                        </a>
+                    }
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</section>

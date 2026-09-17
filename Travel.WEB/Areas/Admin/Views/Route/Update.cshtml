@@ -1,47 +1,511 @@
-﻿@using Travel.WEB.DTOs.RouteDTOs
-@model UpdateRouteDto;
+﻿@model Travel.WEB.Models.Admin.RouteUpdateViewModel
+
 @{
-    ViewData["Title"] = "Update";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Rota Güncelle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
+@section Styles {
+    <link rel="stylesheet"
+          href="~/adminroutecss/route.css"
+          asp-append-version="true" />
+}
 
-<h1>Rota Güncelle</h1>
+<div class="route-page">
 
-<form method="post">
+    <!-- HEADER -->
 
-    <input type="hidden" asp-for="Id" />
+    <div class="route-header">
 
-    <label>Görsel Url</label>
-    <input type="text" asp-for="ImageUrl" class="form-control" />
-    <span class="text-danger" asp-validation-for="ImageUrl"></span>
+        <div class="route-header-content">
 
-    <br />
+            <h1>Rota Güncelle</h1>
 
-    <label>Ülke</label>
-    <input type="text" asp-for="Country" class="form-control" />
-    <span class="text-danger" asp-validation-for="Country"></span>
+            <p>
+                @Model.Route.City, @Model.Route.Country
+                rotasının bilgilerini yönetin.
+            </p>
 
-    <br />
+        </div>
 
-    <label>Şehir</label>
-    <input type="text" asp-for="City" class="form-control" />
-    <span class="text-danger" asp-validation-for="City"></span>
+        <a asp-area="Admin"
+           asp-controller="Route"
+           asp-action="Index"
+           class="route-btn route-btn-secondary">
+            ← Rotalara Dön
+        </a>
 
-    <br />
+    </div>
 
-    <label>Tur Süresi</label>
-    <input type="text" asp-for="Duration" class="form-control" />
-    <span class="text-danger" asp-validation-for="Duration"></span>
 
-    <br />
+    <!-- ===================================================
+         ROUTE UPDATE - $SET
+         =================================================== -->
 
-    <label>Fiyat</label>
-    <input type="text" asp-for="Price" class="form-control" />
-    <span class="text-danger" asp-validation-for="Price"></span>
+    <form asp-area="Admin"
+          asp-controller="Route"
+          asp-action="Update"
+          method="post">
 
-    <br />
+        <input asp-for="Route.Id"
+               type="hidden" />
 
-    <button class="btn btn-outline-dark">Güncelle</button>
 
-</form>
+        <div asp-validation-summary="ModelOnly"
+             class="route-validation">
+        </div>
+
+
+        <!-- BASIC -->
+
+        <div class="route-card">
+
+            <div class="route-card-header">
+
+                <h2>Temel Bilgiler</h2>
+
+                <p>
+                    Bu alanlar UpdateOneAsync ve $set
+                    mantığıyla güncellenir.
+                </p>
+
+            </div>
+
+
+            <div class="route-card-body">
+
+                <div class="route-form-grid">
+
+                    <div class="route-form-group">
+
+                        <label asp-for="Route.City"
+                               class="route-label">
+                            Şehir
+                        </label>
+
+                        <input asp-for="Route.City"
+                               class="route-input" />
+
+                        <span asp-validation-for="Route.City"
+                              class="route-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="route-form-group">
+
+                        <label asp-for="Route.Country"
+                               class="route-label">
+                            Ülke
+                        </label>
+
+                        <input asp-for="Route.Country"
+                               class="route-input" />
+
+                        <span asp-validation-for="Route.Country"
+                              class="route-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="route-form-group">
+
+                        <label asp-for="Route.Duration"
+                               class="route-label">
+                            Süre
+                        </label>
+
+                        <input asp-for="Route.Duration"
+                               class="route-input" />
+
+                        <span asp-validation-for="Route.Duration"
+                              class="route-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="route-form-group">
+
+                        <label asp-for="Route.Price"
+                               class="route-label">
+                            Fiyat
+                        </label>
+
+                        <input asp-for="Route.Price"
+                               type="number"
+                               step="0.01"
+                               class="route-input" />
+
+                        <span asp-validation-for="Route.Price"
+                              class="route-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="route-form-group route-form-group-full">
+
+                        <label asp-for="Route.ImageUrl"
+                               class="route-label">
+                            Görsel URL
+                        </label>
+
+                        <input asp-for="Route.ImageUrl"
+                               class="route-input" />
+
+                        <span asp-validation-for="Route.ImageUrl"
+                              class="route-validation">
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DETAILS -->
+
+        <div class="route-card">
+
+            <div class="route-card-header">
+
+                <h2>Rota Detayları</h2>
+
+                <p>
+                    Embedded Details document'ını güncelleyin.
+                </p>
+
+            </div>
+
+
+            <div class="route-card-body">
+
+                <div class="route-form-grid">
+
+                    <div class="route-form-group">
+
+                        <label class="route-label">
+                            Ulaşım
+                        </label>
+
+                        <input asp-for="Route.Details.Transportation"
+                               class="route-input" />
+
+                    </div>
+
+
+                    <div class="route-form-group">
+
+                        <label class="route-label">
+                            Konaklama
+                        </label>
+
+                        <input asp-for="Route.Details.Accommodation"
+                               class="route-input" />
+
+                    </div>
+
+
+                    <div class="route-form-group route-form-group-full">
+
+                        <label class="route-label">
+                            Açıklama
+                        </label>
+
+                        <textarea asp-for="Route.Details.Description"
+                                  class="route-textarea"></textarea>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="route-form-actions">
+
+            <button type="submit"
+                    class="route-btn route-btn-primary">
+                Değişiklikleri Kaydet
+            </button>
+
+        </div>
+
+    </form>
+
+
+    <!-- ===================================================
+         FEATURES - $addToSet / $pull
+         =================================================== -->
+
+    <div class="route-card"
+         style="margin-top:22px;">
+
+        <div class="route-card-header">
+
+            <h2>Rota Özellikleri</h2>
+
+            <p>
+                Features array'i $addToSet ve $pull
+                operatörleriyle ayrı yönetilir.
+            </p>
+
+        </div>
+
+
+        <div class="route-card-body">
+
+            <div class="route-info-box">
+
+                <div>
+                    <strong>$addToSet</strong>
+                    tekrar etmeyen özellik ekler.
+                    <strong>$pull</strong>
+                    array'den özellik kaldırır.
+                </div>
+
+            </div>
+
+
+            @if (Model.Route.Features != null &&
+                        Model.Route.Features.Any())
+            {
+                <div class="route-feature-list">
+
+                    @foreach (var feature in Model.Route.Features)
+                    {
+                        <div class="route-feature-badge">
+
+                            <span>
+                                @feature
+                            </span>
+
+
+                            <form asp-area="Admin"
+                                  asp-controller="Route"
+                                  asp-action="RemoveFeature"
+                                  method="post">
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@Model.Route.Id" />
+
+                                <input type="hidden"
+                                       name="feature"
+                                       value="@feature" />
+
+                                <button type="submit"
+                                        class="route-feature-remove"
+                                        title="Özelliği kaldır">
+                                    ×
+                                </button>
+
+                            </form>
+
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="route-empty">
+
+                    <h3>Özellik bulunmuyor</h3>
+
+                    <p>
+                        Bu rotaya henüz özellik eklenmemiş.
+                    </p>
+
+                </div>
+            }
+
+
+            <form asp-area="Admin"
+                  asp-controller="Route"
+                  asp-action="AddFeature"
+                  method="post"
+                  class="route-feature-add">
+
+                <input type="hidden"
+                       name="id"
+                       value="@Model.Route.Id" />
+
+                <input type="text"
+                       name="feature"
+                       class="route-input"
+                       placeholder="Örn: Ücretsiz Transfer"
+                       required />
+
+                <button type="submit"
+                        class="route-btn route-btn-primary">
+                    + Özellik Ekle
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         REVIEWS - REFERENCE
+         =================================================== -->
+
+    <div class="route-card">
+
+        <div class="route-card-header">
+
+            <h2>Yorumlar</h2>
+
+            <p>
+                Yorumlar Route içine embed edilmez.
+                Ayrı Reviews collection'ında RouteId
+                referansı ile tutulur.
+            </p>
+
+        </div>
+
+
+        <div class="route-card-body">
+
+            <div class="review-summary">
+
+                <span class="review-count">
+                    @Model.Reviews.Count yorum
+                </span>
+
+            </div>
+
+
+            @if (Model.Reviews.Any())
+            {
+                <div class="review-list">
+
+                    @foreach (var review in Model.Reviews)
+                    {
+                        var firstLetter =
+                        string.IsNullOrWhiteSpace(review.UserName)
+                        ? "?"
+                        : review.UserName
+                        .Substring(0, 1)
+                        .ToUpper();
+
+                        <div class="review-item">
+
+                            <div class="review-header">
+
+                                <div class="review-user">
+
+                                    <div class="review-avatar">
+                                        @firstLetter
+                                    </div>
+
+                                    <div>
+
+                                        <div class="review-user-name">
+                                            @review.UserName
+                                        </div>
+
+                                        <span class="review-date">
+
+                                            @review.CreatedDate
+                                            .ToLocalTime()
+                                            .ToString(
+                                            "dd.MM.yyyy HH:mm")
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="review-rating">
+
+                                    @for (var i = 1; i <= 5; i++)
+                                    {
+                                        <span class="@(i <= review.Rating
+                                                                                          ? "review-star-active"
+                                                                                          : "")">
+                                ★
+                            </span>
+                                                        }
+
+                                </div>
+
+                            </div>
+
+
+                            <p class="review-comment">
+                                @review.Comment
+                            </p>
+
+
+                            <div class="review-actions">
+
+                                <form asp-area="Admin"
+                                      asp-controller="Review"
+                                      asp-action="Delete"
+                                      method="post">
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@review.Id" />
+
+                                    <input type="hidden"
+                                           name="routeId"
+                                           value="@Model.Route.Id" />
+
+                                    <button type="submit"
+                                            class="route-btn route-btn-danger"
+                                            onclick="return confirm('Bu yorumu silmek istediğinize emin misiniz?')">
+
+                                        Yorumu Sil
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="route-empty">
+
+                    <h3>Henüz yorum yok</h3>
+
+                    <p>
+                        Bu rota için ilk test yorumunu
+                        aşağıdaki formdan ekleyebilirsiniz.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

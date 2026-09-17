@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - Travel
+    </title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/publictravel/travel.css"
+          asp-append-version="true" />
+
+    @await RenderSectionAsync(
+    "Styles",
+        required: false
+        )
+
+</head>
+
+
+<body>
+
+    <!-- HEADER -->
+
+    <header class="travel-header">
+
+        <div class="travel-container travel-header-inner">
+
+            <a asp-controller="Tour"
+               asp-action="Index"
+               class="travel-brand">
+
+                <span class="travel-brand-icon">
+                    <i class="bi bi-compass"></i>
+                </span>
+
+                <span>
+                    Travel
+                </span>
+
+            </a>
+
+
+            <nav class="travel-nav">
+
+                <a asp-controller="Tour"
+                   asp-action="Index">
+                    Turlar
+                </a>
+
+                <a asp-controller="Reservation"
+                   asp-action="Track">
+                    Rezervasyonum
+                </a>
+
+                <a href="#about">
+                    Hakkımızda
+                </a>
+
+            </nav>
+
+            <a asp-controller="Tour"
+               asp-action="Index"
+               class="travel-header-button">
+
+                Turunu Keşfet
+
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <main>
+
+        @RenderBody()
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="travel-footer"
+            id="about">
+
+        <div class="travel-container travel-footer-grid">
+
+            <div>
+
+                <div class="travel-footer-brand">
+                    Travel
+                </div>
+
+                <p>
+                    Yeni yerler keşfetmek için sade,
+                    hızlı ve kullanışlı seyahat deneyimi.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <strong>Proje</strong>
+
+                <p>
+                    ASP.NET Core MVC ve MongoDB
+                    öğrenme projesi.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <strong>Teknolojiler</strong>
+
+                <p>
+                    MongoDB • ASP.NET Core • AutoMapper
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="travel-footer-bottom">
+
+            © @DateTime.Now.Year Travel
+
+        </div>
+
+    </footer>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    @await RenderSectionAsync(
+        "Scripts",
+        required: false
+        )
+
+</body>
+
+</html>

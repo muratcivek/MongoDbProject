@@ -1,80 +1,313 @@
-﻿@using Travel.WEB.DTOs.RouteDTOs
-@model CreateRouteDto
+﻿@model Travel.WEB.DTOs.RouteDTOs.CreateRouteDto
 
 @{
-    ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Yeni Rota";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+
+    var availableFeatures = new[]
+    {
+        "WiFi",
+        "Kahvaltı",
+        "Rehber",
+        "Transfer",
+        "Müze Girişleri",
+        "Akşam Yemeği"
+    };
 }
 
-<div class="container mt-4">
+@section Styles {
+    <link rel="stylesheet"
+          href="~/adminroutecss/route.css"
+          asp-append-version="true" />
+}
 
-    <div class="card shadow-sm border-0">
-        <div class="card-body">
+<div class="route-page">
 
-            <h3 class="fw-bold mb-4">Yeni Rota Ekle</h3>
+    <div class="route-header">
 
-            <form method="post">
+        <div class="route-header-content">
+            <h1>Yeni Rota</h1>
 
-                <div class="mb-3">
-                    <label class="form-label">Şehir</label>
-                    <input type="text"
-                           asp-for="City"
-                           class="form-control" />
-                    <span class="text-danger"
-                          asp-validation-for="City"></span>
+            <p>
+                Yeni seyahat rotası ve MongoDB document
+                bilgilerini oluşturun.
+            </p>
+        </div>
+
+        <a asp-area="Admin"
+           asp-controller="Route"
+           asp-action="Index"
+           class="route-btn route-btn-secondary">
+            ← Rotalara Dön
+        </a>
+
+    </div>
+
+
+    <form asp-area="Admin"
+          asp-controller="Route"
+          asp-action="Create"
+          method="post">
+
+        <div asp-validation-summary="ModelOnly"
+             class="route-validation">
+        </div>
+
+
+        <!-- TEMEL BİLGİLER -->
+
+        <div class="route-card">
+
+            <div class="route-card-header">
+                <h2>Temel Bilgiler</h2>
+
+                <p>
+                    Rotanın temel seyahat bilgilerini girin.
+                </p>
+            </div>
+
+
+            <div class="route-card-body">
+
+                <div class="route-form-grid">
+
+                    <div class="route-form-group">
+
+                        <label asp-for="City"
+                               class="route-label">
+                            Şehir
+                        </label>
+
+                        <input asp-for="City"
+                               class="route-input"
+                               placeholder="Örn: Bursa" />
+
+                        <span asp-validation-for="City"
+                              class="route-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="route-form-group">
+
+                        <label asp-for="Country"
+                               class="route-label">
+                            Ülke
+                        </label>
+
+                        <input asp-for="Country"
+                               class="route-input"
+                               placeholder="Örn: Türkiye" />
+
+                        <span asp-validation-for="Country"
+                              class="route-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="route-form-group">
+
+                        <label asp-for="Duration"
+                               class="route-label">
+                            Süre
+                        </label>
+
+                        <input asp-for="Duration"
+                               class="route-input"
+                               placeholder="Örn: 5 Gün 4 Gece" />
+
+                        <span asp-validation-for="Duration"
+                              class="route-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="route-form-group">
+
+                        <label asp-for="Price"
+                               class="route-label">
+                            Fiyat
+                        </label>
+
+                        <input asp-for="Price"
+                               type="number"
+                               step="0.01"
+                               class="route-input"
+                               placeholder="0.00" />
+
+                        <span asp-validation-for="Price"
+                              class="route-validation">
+                        </span>
+
+                    </div>
+
+
+                    <div class="route-form-group route-form-group-full">
+
+                        <label asp-for="ImageUrl"
+                               class="route-label">
+                            Görsel URL
+                        </label>
+
+                        <input asp-for="ImageUrl"
+                               class="route-input"
+                               placeholder="https://..." />
+
+                        <span asp-validation-for="ImageUrl"
+                              class="route-validation">
+                        </span>
+
+                    </div>
+
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Ülke</label>
-                    <input type="text"
-                           asp-for="Country"
-                           class="form-control" />
-                    <span class="text-danger"
-                          asp-validation-for="Country"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Süre</label>
-                    <input type="text"
-                           asp-for="Duration"
-                           class="form-control"
-                           placeholder="Örn: 5 Gün 4 Gece" />
-                    <span class="text-danger"
-                          asp-validation-for="Duration"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Görsel Url</label>
-                    <input type="text"
-                           asp-for="ImageUrl"
-                           class="form-control" />
-                    <span class="text-danger"
-                          asp-validation-for="ImageUrl"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Fiyat</label>
-                    <input type="number"
-                           asp-for="Price"
-                           class="form-control"
-                           step="0.01" />
-                    <span class="text-danger"
-                          asp-validation-for="Price"></span>
-                </div>
-
-                <button type="submit"
-                        class="btn btn-primary">
-                    Kaydet
-                </button>
-
-            </form>
+            </div>
 
         </div>
-    </div>
+
+
+        <!-- EMBEDDED DOCUMENT -->
+
+        <div class="route-card">
+
+            <div class="route-card-header">
+
+                <h2>Rota Detayları</h2>
+
+                <p>
+                    Bu bilgiler Route document'ı içerisinde
+                    embedded document olarak saklanır.
+                </p>
+
+            </div>
+
+
+            <div class="route-card-body">
+
+                <div class="route-info-box">
+                    <div>
+                        <strong>MongoDB:</strong>
+                        Details alanı ayrı collection değildir.
+                        Route document'ının içerisinde saklanır.
+                    </div>
+                </div>
+
+
+                <div class="route-form-grid">
+
+                    <div class="route-form-group">
+
+                        <label class="route-label">
+                            Ulaşım
+                        </label>
+
+                        <input asp-for="Details.Transportation"
+                               class="route-input"
+                               placeholder="Örn: Otobüs" />
+
+                    </div>
+
+
+                    <div class="route-form-group">
+
+                        <label class="route-label">
+                            Konaklama
+                        </label>
+
+                        <input asp-for="Details.Accommodation"
+                               class="route-input"
+                               placeholder="Örn: 5 Yıldızlı Otel" />
+
+                    </div>
+
+
+                    <div class="route-form-group route-form-group-full">
+
+                        <label class="route-label">
+                            Açıklama
+                        </label>
+
+                        <textarea asp-for="Details.Description"
+                                  class="route-textarea"
+                                  placeholder="Rota hakkında detaylı açıklama..."></textarea>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ARRAY -->
+
+        <div class="route-card">
+
+            <div class="route-card-header">
+
+                <h2>Rota Özellikleri</h2>
+
+                <p>
+                    Seçimler MongoDB içerisinde Features
+                    array'i olarak saklanır.
+                </p>
+
+            </div>
+
+
+            <div class="route-card-body">
+
+                <div class="route-features-grid">
+
+                    @foreach (var feature in availableFeatures)
+                    {
+                        var isChecked =
+                        Model?.Features?.Contains(feature) == true;
+
+                        <label class="route-feature-option">
+
+                            <input type="checkbox"
+                                   name="Features"
+                                   value="@feature"
+                                   checked="@isChecked" />
+
+                            <span>@feature</span>
+
+                        </label>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="route-form-actions">
+
+            <a asp-area="Admin"
+               asp-controller="Route"
+               asp-action="Index"
+               class="route-btn route-btn-secondary">
+                İptal
+            </a>
+
+            <button type="submit"
+                    class="route-btn route-btn-primary">
+                + Rotayı Oluştur
+            </button>
+
+        </div>
+
+    </form>
 
 </div>
 
-<a href="/Admin/Route/Create"
-   class="btn btn-outline-dark mt-3">
-    Yeni Rota Ekle
-</a>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

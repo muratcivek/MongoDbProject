@@ -1,0 +1,521 @@
+﻿@model Travel.WEB.Models.Public.TourDetailViewModel
+
+@{
+    ViewData["Title"] =
+        $"{Model.Route.City} Turu";
+
+    Layout =
+        "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+
+<section class="travel-detail">
+
+    <div class="travel-container">
+
+
+        <!-- MESSAGES -->
+        @if (TempData["ReviewSuccess"] != null)
+        {
+            <div class="travel-alert travel-alert-success">
+
+                @TempData["ReviewSuccess"]
+
+            </div>
+        }
+
+
+        @if (TempData["ReviewError"] != null)
+        {
+            <div class="travel-alert travel-alert-danger">
+
+                @TempData["ReviewError"]
+
+            </div>
+        }
+
+
+        @if (TempData["ReservationSuccess"] != null)
+        {
+            <div class="travel-alert travel-alert-success">
+
+                @TempData["ReservationSuccess"]
+
+            </div>
+        }
+
+
+        @if (TempData["ReservationError"] != null)
+        {
+            <div class="travel-alert travel-alert-danger">
+
+                @TempData["ReservationError"]
+
+            </div>
+        }
+
+
+        <!-- HERO -->
+
+        <div class="travel-detail-hero">
+
+            <img src="@Model.Route.ImageUrl"
+                 alt="@Model.Route.City"
+                 class="travel-detail-image" />
+
+
+            <div class="travel-detail-summary">
+
+                <div class="travel-detail-country">
+
+                    @Model.Route.Country
+
+                </div>
+
+
+                <h1>
+                    @Model.Route.City
+                </h1>
+
+
+                <div class="travel-detail-price">
+
+                    @Model.Route.Price.ToString("N2") €
+
+                </div>
+
+
+                <div class="travel-detail-duration">
+
+                    <i class="bi bi-clock"></i>
+
+                    @Model.Route.Duration
+
+                </div>
+
+
+                @if (Model.Route.Features != null &&
+                                Model.Route.Features.Any())
+                {
+                    <div class="travel-detail-features">
+
+                        @foreach (var feature
+                                            in Model.Route.Features)
+                        {
+                            <span class="travel-badge">
+                                @feature
+                            </span>
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTENT -->
+
+        <div class="travel-detail-grid">
+
+
+            <!-- LEFT -->
+
+            <div>
+
+
+                <!-- DETAILS -->
+
+                <div class="travel-card">
+
+                    <h2>
+                        Tur Detayları
+                    </h2>
+
+                    <p class="travel-card-description">
+                        Yolculuk hakkında temel bilgiler.
+                    </p>
+
+
+                    <div class="travel-detail-data">
+
+                        <div class="travel-detail-data-item">
+
+                            <span>
+                                Ulaşım
+                            </span>
+
+                            <strong>
+
+                                @(Model.Route.Details?.Transportation
+                                                                ?? "-")
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="travel-detail-data-item">
+
+                            <span>
+                                Konaklama
+                            </span>
+
+                            <strong>
+
+                                @(Model.Route.Details?.Accommodation
+                                                                ?? "-")
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <p style="
+                        color:#4b5563;
+                        line-height:1.75;
+                        margin:0;">
+
+                        @(Model.Route.Details?.Description
+                                                ?? "Bu rota için henüz açıklama eklenmemiş.")
+
+                    </p>
+
+                </div>
+
+
+                <!-- REVIEWS -->
+
+                <div class="travel-card">
+
+                    <h2>
+                        Yorumlar
+                    </h2>
+
+                    <p class="travel-card-description">
+
+                        @Model.Reviews.Count kullanıcı yorumu
+
+                    </p>
+
+
+                    @if (Model.Reviews.Any())
+                    {
+                        foreach (var review in Model.Reviews)
+                        {
+                            <div class="travel-review">
+
+                                <div class="travel-review-header">
+
+                                    <div>
+
+                                        <div class="travel-review-user">
+
+                                            @review.UserName
+
+                                        </div>
+
+                                        <div class="travel-review-date">
+
+                                            @review.CreatedDate
+                                            .ToLocalTime()
+                                            .ToString(
+                                            "dd.MM.yyyy HH:mm")
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="travel-review-stars">
+
+                                        @for (var i = 1;
+                                                                        i <= 5;
+                                                                        i++)
+                                        {
+                                            <span class="@(i <= review.Rating
+                                                                                                  ? "active"
+                                                                                                  : "")">
+
+                                    ★
+
+                                            </span>
+                                                                }
+
+                                    </div>
+
+                                </div>
+
+
+                                <p class="travel-review-comment">
+
+                                    @review.Comment
+
+                                </p>
+
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p style="color:#9ca3af;">
+                            Henüz yorum yapılmamış.
+                        </p>
+                    }
+
+                </div>
+
+
+                <!-- CREATE REVIEW -->
+
+                <div class="travel-card">
+
+                    <h2>
+                        Yorum Yap
+                    </h2>
+
+                    <p class="travel-card-description">
+
+                        Tur hakkındaki deneyiminizi paylaşın.
+
+                    </p>
+
+
+                    <form asp-controller="Review"
+                          asp-action="Create"
+                          method="post">
+
+                        <input type="hidden"
+                               name="RouteId"
+                               value="@Model.Route.Id" />
+
+
+                        <div class="travel-form-grid">
+
+                            <div class="travel-form-group">
+
+                                <label class="travel-label">
+                                    Adınız
+                                </label>
+
+                                <input type="text"
+                                       name="UserName"
+                                       class="travel-input"
+                                       placeholder="Adınız"
+                                       required />
+
+                            </div>
+
+
+                            <div class="travel-form-group">
+
+                                <label class="travel-label">
+                                    Puan
+                                </label>
+
+                                <select name="Rating"
+                                        class="travel-select">
+
+                                    <option value="5">
+                                        5 - Çok iyi
+                                    </option>
+
+                                    <option value="4">
+                                        4 - İyi
+                                    </option>
+
+                                    <option value="3">
+                                        3 - Orta
+                                    </option>
+
+                                    <option value="2">
+                                        2 - Kötü
+                                    </option>
+
+                                    <option value="1">
+                                        1 - Çok kötü
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="travel-form-group
+                                        travel-form-full">
+
+                                <label class="travel-label">
+                                    Yorum
+                                </label>
+
+                                <textarea name="Comment"
+                                          class="travel-textarea"
+                                          placeholder="Yorumunuzu yazın..."
+                                          required></textarea>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="travel-form-actions">
+
+                            <button type="submit"
+                                    class="travel-btn
+                                           travel-btn-primary">
+
+                                Yorumu Gönder
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT -->
+
+            <aside>
+
+
+                <!-- RESERVATION -->
+
+                <div class="travel-card">
+
+                    <h2>
+                        Rezervasyon Yap
+                    </h2>
+
+                    <p class="travel-card-description">
+
+                        Bilgilerinizi bırakın,
+                        rezervasyon talebinizi oluşturalım.
+
+                    </p>
+
+
+                    <form asp-controller="Reservation"
+                          asp-action="Create"
+                          method="post">
+
+                        <input type="hidden"
+                               name="RouteId"
+                               value="@Model.Route.Id" />
+
+
+                        <div class="travel-form-group"
+                             style="margin-bottom:13px;">
+
+                            <label class="travel-label">
+                                Ad Soyad
+                            </label>
+
+                            <input type="text"
+                                   name="FullName"
+                                   class="travel-input"
+                                   placeholder="Ad Soyad"
+                                   required />
+
+                        </div>
+
+
+                        <div class="travel-form-group"
+                             style="margin-bottom:13px;">
+
+                            <label class="travel-label">
+                                Email
+                            </label>
+
+                            <input type="email"
+                                   name="Email"
+                                   class="travel-input"
+                                   placeholder="ornek@mail.com"
+                                   required />
+
+                        </div>
+
+
+                        <div class="travel-form-group"
+                             style="margin-bottom:13px;">
+
+                            <label class="travel-label">
+                                Telefon
+                            </label>
+
+                            <input type="tel"
+                                   name="Phone"
+                                   class="travel-input"
+                                   placeholder="05xx xxx xx xx"
+                                   required />
+
+                        </div>
+
+
+                        <div class="travel-form-grid">
+
+                            <div class="travel-form-group">
+
+                                <label class="travel-label">
+                                    Kişi Sayısı
+                                </label>
+
+                                <input type="number"
+                                       name="PersonCount"
+                                       min="1"
+                                       max="10"
+                                       value="@Model.ReservationForm.PersonCount"
+                                       class="travel-input"
+                                       required />
+
+                            </div>
+
+
+                            <div class="travel-form-group">
+
+                                <label class="travel-label">
+                                    Seyahat Tarihi
+                                </label>
+
+                                <input type="date"
+                                       name="TravelDate"
+                                       value="@Model.ReservationForm.TravelDate.ToString("yyyy-MM-dd")"
+                                       min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                       class="travel-input"
+                                       required />
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="travel-form-actions">
+
+                            <button type="submit"
+                                    class="travel-btn
+                                           travel-btn-primary"
+                                    style="width:100%;">
+
+                                Rezervasyon Talebi Oluştur
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </div>
+
+</section>

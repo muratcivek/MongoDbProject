@@ -1,0 +1,514 @@
+﻿@using Travel.WEB.DTOs.Common
+@using Travel.WEB.DTOs.RouteDTOs
+
+@model PagedResultDto<ResultRouteDto>
+
+@{
+    ViewData["Title"] = "Turlar";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+
+    var searchText = Context.Request.Query["SearchText"].ToString();
+    var city = Context.Request.Query["City"].ToString();
+    var country = Context.Request.Query["Country"].ToString();
+    var minPrice = Context.Request.Query["MinPrice"].ToString();
+    var maxPrice = Context.Request.Query["MaxPrice"].ToString();
+}
+
+
+<!-- HERO -->
+
+<section class="travel-hero">
+
+    <div class="travel-container">
+
+        <div class="travel-hero-content">
+
+            <span class="travel-eyebrow">
+                Yeni rotalar keşfet
+            </span>
+
+            <h1>
+                Bir sonraki yolculuğunu keşfet.
+            </h1>
+
+            <p>
+                Farklı şehirleri keşfet,
+                sana uygun seyahat rotasını bul
+                ve birkaç adımda rezervasyon talebi oluştur.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- SEARCH -->
+
+<section class="travel-search-section">
+
+    <div class="travel-container">
+
+        <form method="get"
+              asp-controller="Tour"
+              asp-action="Index"
+              class="travel-search-card">
+
+            <!-- GENERAL SEARCH -->
+
+            <div class="travel-form-group">
+
+                <label class="travel-label">
+                    Genel Arama
+                </label>
+
+                <input type="text"
+                       name="SearchText"
+                       value="@searchText"
+                       class="travel-input"
+                       placeholder="Şehir, ülke veya açıklama..." />
+
+            </div>
+
+
+            <!-- CITY -->
+
+            <div class="travel-form-group">
+
+                <label class="travel-label">
+                    Şehir
+                </label>
+
+                <input type="text"
+                       name="City"
+                       value="@city"
+                       class="travel-input"
+                       placeholder="Örn: Paris" />
+
+            </div>
+
+
+            <!-- COUNTRY -->
+
+            <div class="travel-form-group">
+
+                <label class="travel-label">
+                    Ülke
+                </label>
+
+                <input type="text"
+                       name="Country"
+                       value="@country"
+                       class="travel-input"
+                       placeholder="Örn: Fransa" />
+
+            </div>
+
+
+            <!-- MIN PRICE -->
+
+            <div class="travel-form-group">
+
+                <label class="travel-label">
+                    Min. Fiyat
+                </label>
+
+                <input type="number"
+                       name="MinPrice"
+                       value="@minPrice"
+                       class="travel-input"
+                       placeholder="0"
+                       min="0" />
+
+            </div>
+
+
+            <!-- MAX PRICE -->
+
+            <div class="travel-form-group">
+
+                <label class="travel-label">
+                    Maks. Fiyat
+                </label>
+
+                <input type="number"
+                       name="MaxPrice"
+                       value="@maxPrice"
+                       class="travel-input"
+                       placeholder="5000"
+                       min="0" />
+
+            </div>
+
+
+            <!-- SEARCH BUTTON -->
+
+            <div class="travel-form-group"
+                 style="justify-content:flex-end;">
+
+                <button type="submit"
+                        class="travel-btn travel-btn-primary">
+
+                    <i class="bi bi-search"></i>
+
+                    Ara
+
+                </button>
+
+            </div>
+
+
+            <input type="hidden"
+                   name="Page"
+                   value="1" />
+
+            <input type="hidden"
+                   name="PageSize"
+                   value="9" />
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- TOURS -->
+
+<section class="travel-tours">
+
+    <div class="travel-container">
+
+        <div class="travel-section-header">
+
+            <div>
+
+                <h2>
+                    Turlar
+                </h2>
+
+                <p>
+                    @Model.TotalCount rota bulundu.
+                </p>
+
+            </div>
+
+
+            @if (!string.IsNullOrWhiteSpace(searchText) ||
+                        !string.IsNullOrWhiteSpace(city) ||
+                        !string.IsNullOrWhiteSpace(country) ||
+                        !string.IsNullOrWhiteSpace(minPrice) ||
+                        !string.IsNullOrWhiteSpace(maxPrice))
+            {
+                <a asp-controller="Tour"
+                   asp-action="Index"
+                   class="travel-btn travel-btn-light">
+
+                    Filtreleri Temizle
+
+                </a>
+            }
+
+        </div>
+
+
+        <!-- TOUR CARDS -->
+        @if (Model.Items != null &&
+                Model.Items.Any())
+        {
+            <div class="travel-tour-grid">
+
+                @foreach (var item in Model.Items)
+                {
+                    <article class="travel-tour-card">
+
+                        <img src="@item.ImageUrl"
+                             alt="@item.City"
+                             class="travel-tour-image"
+                             onerror="this.style.display='none'" />
+
+
+                        <div class="travel-tour-content">
+
+                            <div class="travel-tour-meta">
+
+                                <span>
+
+                                    <i class="bi bi-clock"></i>
+
+                                    @item.Duration
+
+                                </span>
+
+
+                                <span>
+
+                                    <i class="bi bi-geo-alt"></i>
+
+                                    @item.Country
+
+                                </span>
+
+                            </div>
+
+
+                            <h3 class="travel-tour-title">
+
+                                @item.City
+
+                            </h3>
+
+
+                            <div class="travel-tour-country">
+
+                                @item.Country
+
+                            </div>
+
+
+                            <!-- FEATURES -->
+                            @if (item.Features != null &&
+                                                item.Features.Any())
+                            {
+                                <div class="travel-tour-features">
+
+                                    @foreach (
+                                                            var feature
+                                                            in item.Features.Take(3))
+                                    {
+                                        <span class="travel-badge">
+
+                                            @feature
+
+                                        </span>
+                                    }
+
+
+                                    @if (item.Features.Count > 3)
+                                    {
+                                        <span class="travel-badge">
+
+                                            +@(item.Features.Count - 3)
+
+                                        </span>
+                                    }
+
+                                </div>
+                            }
+
+
+                            <!-- FOOTER -->
+
+                            <div class="travel-tour-footer">
+
+                                <div class="travel-tour-price">
+
+                                    @item.Price.ToString("N2") €
+
+                                </div>
+
+
+                                <a asp-controller="Tour"
+                                   asp-action="Detail"
+                                   asp-route-id="@item.Id"
+                                   class="travel-btn travel-btn-primary">
+
+                                    Detay Gör
+
+                                    <i class="bi bi-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="travel-card">
+
+                <h2>
+                    Tur bulunamadı
+                </h2>
+
+                <p class="travel-card-description">
+
+                    Aradığınız kriterlere uygun bir rota bulunamadı.
+                    Filtreleri değiştirerek tekrar deneyebilirsiniz.
+
+                </p>
+
+
+                <a asp-controller="Tour"
+                   asp-action="Index"
+                   class="travel-btn travel-btn-light">
+
+                    Filtreleri Temizle
+
+                </a>
+
+            </div>
+        }
+
+
+        <!-- PAGINATION -->
+        @if (Model.TotalPages > 1)
+        {
+            var currentPage =
+            Model.Page;
+
+            var totalPages =
+            Model.TotalPages;
+
+            var startPage =
+            Math.Max(
+            1,
+            currentPage - 2);
+
+            var endPage =
+            Math.Min(
+            totalPages,
+            currentPage + 2);
+
+
+            <div class="travel-pagination">
+
+
+                <!-- PREVIOUS -->
+
+                <a class="travel-page-link
+                              @(!Model.HasPreviousPage
+                                                 ? "disabled"
+                                                 : "")"
+               asp-controller="Tour"
+               asp-action="Index"
+               asp-route-SearchText="@searchText"
+               asp-route-City="@city"
+               asp-route-Country="@country"
+               asp-route-MinPrice="@minPrice"
+               asp-route-MaxPrice="@maxPrice"
+               asp-route-Page="@(currentPage - 1)"
+               asp-route-PageSize="@Model.PageSize">
+
+                    ‹
+
+                </a>
+
+
+                <!-- FIRST PAGE -->
+            @if (startPage > 1)
+                {
+                    <a class="travel-page-link"
+                       asp-controller="Tour"
+                       asp-action="Index"
+                       asp-route-SearchText="@searchText"
+                       asp-route-City="@city"
+                       asp-route-Country="@country"
+                       asp-route-MinPrice="@minPrice"
+                       asp-route-MaxPrice="@maxPrice"
+                       asp-route-Page="1"
+                       asp-route-PageSize="@Model.PageSize">
+
+                        1
+
+                    </a>
+
+
+                    @if (startPage > 2)
+                    {
+                        <span class="travel-page-dots">
+
+                            ...
+
+                        </span>
+                    }
+                }
+
+
+                <!-- CURRENT PAGE RANGE -->
+                @for (var i = startPage;
+                            i <= endPage;
+                            i++)
+                {
+                    <a class="travel-page-link
+                                      @(i == currentPage
+                                                         ? "active"
+                                                         : "")"
+               asp-controller="Tour"
+               asp-action="Index"
+               asp-route-SearchText="@searchText"
+               asp-route-City="@city"
+               asp-route-Country="@country"
+               asp-route-MinPrice="@minPrice"
+               asp-route-MaxPrice="@maxPrice"
+               asp-route-Page="@i"
+               asp-route-PageSize="@Model.PageSize">
+
+                        @i
+
+                    </a>
+                        }
+
+
+                <!-- LAST PAGE -->
+                @if (endPage < totalPages)
+                {
+                    @if (endPage < totalPages - 1)
+                    {
+                        <span class="travel-page-dots">
+
+                            ...
+
+                        </span>
+                    }
+
+
+                    <a class="travel-page-link"
+                       asp-controller="Tour"
+                       asp-action="Index"
+                       asp-route-SearchText="@searchText"
+                       asp-route-City="@city"
+                       asp-route-Country="@country"
+                       asp-route-MinPrice="@minPrice"
+                       asp-route-MaxPrice="@maxPrice"
+                       asp-route-Page="@totalPages"
+                       asp-route-PageSize="@Model.PageSize">
+
+                        @totalPages
+
+                    </a>
+                }
+
+
+            <!-- NEXT -->
+
+            <a class="travel-page-link
+                          @(!Model.HasNextPage
+                                             ? "disabled"
+                                             : "")"
+               asp-controller="Tour"
+               asp-action="Index"
+               asp-route-SearchText="@searchText"
+               asp-route-City="@city"
+               asp-route-Country="@country"
+               asp-route-MinPrice="@minPrice"
+               asp-route-MaxPrice="@maxPrice"
+               asp-route-Page="@(currentPage + 1)"
+               asp-route-PageSize="@Model.PageSize">
+
+                    ›
+
+                </a>
+
+            </div>
+                }
+
+    </div>
+
+</section>

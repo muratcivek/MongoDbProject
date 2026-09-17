@@ -1,70 +1,672 @@
-﻿@using Travel.WEB.DTOs.RouteDTOs
-@model List<ResultRouteDto>
+﻿@using Travel.WEB.Models.Admin
+@model RouteIndexViewModel
 
-<link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+@{
+    ViewData["Title"] = "Rota Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
 
-<h1>Rotalar</h1>
+@section Styles {
+    <link rel="stylesheet"
+          href="~/adminroutecss/route.css"
+          asp-append-version="true" />
+}
 
-<form method = "post" asp-action="SearchCity" asp-controller="Route">
-    <input type="text" name="city" placeholder="Şehir İsmini Buraya Yazınız..." />
-    <input type="submit" class="btn btn-dark" value="Ara" />
-</form>
+<div class="route-page">
 
-<table class="table table-bordered table-hover">
-    @{
-        int count = 0;
+    <!-- HEADER -->
+    <div class="route-header">
+
+        <div class="route-header-content">
+            <h1>Rota Yönetimi</h1>
+
+            <p>
+                MongoDB'deki seyahat rotalarını görüntüleyin,
+                filtreleyin ve yönetin.
+            </p>
+        </div>
+
+        <a asp-area="Admin"
+           asp-controller="Route"
+           asp-action="Create"
+           class="route-btn route-btn-primary">
+
+            + Yeni Rota
+
+        </a>
+
+    </div>
+
+
+    <!-- BAŞARI / HATA MESAJLARI -->
+    @if (TempData["RouteSuccess"] != null)
+    {
+        <div class="route-alert route-alert-success">
+            <span>✓</span>
+
+            <span>
+                @TempData["RouteSuccess"]
+            </span>
+        </div>
     }
 
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Görsel</th>
-            <th>Ülke</th>
-            <th>Şehir</th>
-            <th>Tur Süresi</th>
-            <th>Fiyat</th>
-            <th>İşlemler</th>
-        </tr>
-    </thead>
+    @if (TempData["RouteError"] != null)
+    {
+        <div class="route-alert route-alert-danger">
+            <span>!</span>
 
-    <tbody>
-        @foreach (var item in Model)
+            <span>
+                @TempData["RouteError"]
+            </span>
+        </div>
+    }
+
+
+    <!-- FILTER -->
+
+    <div class="route-card">
+
+        <div class="route-card-header">
+
+            <h2>Filtreleme</h2>
+
+            <p>
+                MongoDB sorgularını kullanarak şehir, ülke
+                ve fiyat aralığına göre sonuçları filtreleyin.
+            </p>
+
+        </div>
+
+        <div class="route-card-body">
+
+            <form method="get"
+                  asp-area="Admin"
+                  asp-controller="Route"
+                  asp-action="Index">
+
+                <div class="route-filter-grid">
+
+
+                    <div class="route-form-group">
+
+                        <label class="route-label">
+                            Genel Arama
+                        </label>
+
+                        <input type="text"
+                               name="SearchText"
+                               value="@Model.Filter.SearchText"
+                               class="route-input"
+                               placeholder="Şehir, ülke, açıklama..." />
+
+                    </div>
+
+                    <!-- CITY -->
+
+                    <div class="route-form-group">
+
+                        <label class="route-label">
+                            Şehir
+                        </label>
+
+                        <input type="text"
+                               name="City"
+                               value="@Model.Filter.City"
+                               class="route-input"
+                               placeholder="Örn: Ankara" />
+
+                    </div>
+
+
+                    <!-- COUNTRY -->
+
+                    <div class="route-form-group">
+
+                        <label class="route-label">
+                            Ülke
+                        </label>
+
+                        <input type="text"
+                               name="Country"
+                               value="@Model.Filter.Country"
+                               class="route-input"
+                               placeholder="Örn: Türkiye" />
+
+                    </div>
+
+
+                    <!-- MIN PRICE -->
+
+                    <div class="route-form-group">
+
+                        <label class="route-label">
+                            Min. Fiyat
+                        </label>
+
+                        <input type="number"
+                               name="MinPrice"
+                               value="@Model.Filter.MinPrice"
+                               class="route-input"
+                               placeholder="0"
+                               min="0" />
+
+                    </div>
+
+
+                    <!-- MAX PRICE -->
+
+                    <div class="route-form-group">
+
+                        <label class="route-label">
+                            Maks. Fiyat
+                        </label>
+
+                        <input type="number"
+                               name="MaxPrice"
+                               value="@Model.Filter.MaxPrice"
+                               class="route-input"
+                               placeholder="5000"
+                               min="0" />
+
+                    </div>
+
+
+                    <!-- SORT -->
+
+                    <div class="route-form-group">
+
+                        <label class="route-label">
+                            Sıralama
+                        </label>
+
+                        <select name="SortBy"
+                                class="route-select">
+
+                            <option value="">
+                                Varsayılan
+                            </option>
+
+                            <option value="city"
+                                    selected="@(Model.Filter.SortBy == "city")">
+                                Şehir
+                            </option>
+
+                            <option value="country"
+                                    selected="@(Model.Filter.SortBy == "country")">
+                                Ülke
+                            </option>
+
+                            <option value="price"
+                                    selected="@(Model.Filter.SortBy == "price")">
+                                Fiyat
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DIRECTION -->
+
+                    <div class="route-form-group">
+
+                        <label class="route-label">
+                            Sıralama Yönü
+                        </label>
+
+                        <select name="Descending"
+                                class="route-select">
+
+                            <option value="false"
+                                    selected="@(!Model.Filter.Descending)">
+                                Artan
+                            </option>
+
+                            <option value="true"
+                                    selected="@(Model.Filter.Descending)">
+                                Azalan
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PAGE SIZE -->
+
+                <div class="route-filter-bottom">
+
+                    <div class="route-form-group route-page-size">
+
+                        <label class="route-label">
+                            Sayfa Başına
+                        </label>
+
+                        <select name="PageSize"
+                                class="route-select">
+
+                            <option value="5"
+                                    selected="@(Model.Filter.PageSize == 5)">
+                                5 kayıt
+                            </option>
+
+                            <option value="10"
+                                    selected="@(Model.Filter.PageSize == 10)">
+                                10 kayıt
+                            </option>
+
+                            <option value="25"
+                                    selected="@(Model.Filter.PageSize == 25)">
+                                25 kayıt
+                            </option>
+
+                            <option value="50"
+                                    selected="@(Model.Filter.PageSize == 50)">
+                                50 kayıt
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="route-filter-actions">
+
+                        <button type="submit"
+                                class="route-btn route-btn-primary">
+
+                            Filtrele
+
+                        </button>
+
+                        <a asp-area="Admin"
+                           asp-controller="Route"
+                           asp-action="Index"
+                           class="route-btn route-btn-secondary">
+
+                            Filtreleri Temizle
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- RESULT INFO -->
+
+    <div class="route-result-bar">
+
+        <span>
+            Toplam
+            <strong>@Model.Routes.TotalCount</strong>
+            rota bulundu.
+        </span>
+
+        @if (Model.Routes.TotalPages > 0)
         {
-            count++;
-
-            <tr>
-                <td>@count</td>
-
-                <td>
-                    <img src="@item.ImageUrl"
-                         style="height:75px;width:75px;object-fit:cover"
-                         alt="@item.City" />
-                </td>
-
-                <td>@item.Country</td>
-                <td>@item.City</td>
-                <td>@item.Duration</td>
-                <td>@item.Price €</td>
-
-                <td>
-                    <a href="/Admin/Route/Delete/@item.Id"
-                       onclick="return confirm('Silmek istediğinize emin misiniz?')"
-                       class="btn btn-outline-danger">
-                        Sil
-                    </a>
-
-                    <a href="/Admin/Route/Update/@item.Id"
-                       class="btn btn-outline-info">
-                        Güncelle
-                    </a>
-                </td>
-            </tr>
+            <span>
+                Sayfa
+                <strong>@Model.Routes.Page</strong>
+                /
+                <strong>@Model.Routes.TotalPages</strong>
+            </span>
         }
-    </tbody>
-</table>
 
-<a href="/Admin/Route/Create"
-   class="btn btn-outline-dark">
-    Yeni Rota Ekle
-</a>
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="route-card">
+
+        <div class="route-table-wrapper">
+
+            <table class="route-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Rota</th>
+                        <th>Süre</th>
+                        <th>Fiyat</th>
+                        <th>Özellikler</th>
+
+                        <th style="text-align:right;">
+                            İşlemler
+                        </th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @if (Model.Routes.Items != null &&
+                                        Model.Routes.Items.Any())
+                    {
+                        foreach (var item in Model.Routes.Items)
+                        {
+                            <tr>
+
+                                <!-- ROUTE -->
+
+                                <td>
+
+                                    <div class="route-info">
+
+                                        <img src="@item.ImageUrl"
+                                             alt="@item.City"
+                                             class="route-image"
+                                             onerror="this.style.display='none'" />
+
+                                        <div>
+
+                                            <div class="route-city">
+                                                @item.City
+                                            </div>
+
+                                            <div class="route-country">
+                                                @item.Country
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- DURATION -->
+
+                                <td>
+
+                                    <span class="route-duration">
+                                        @item.Duration
+                                    </span>
+
+                                </td>
+
+
+                                <!-- PRICE -->
+
+                                <td>
+
+                                    <span class="route-price">
+                                        @item.Price.ToString("N2") €
+                                    </span>
+
+                                </td>
+
+
+                                <!-- FEATURES -->
+
+                                <td>
+
+                                    @if (item.Features != null &&
+                                                                item.Features.Any())
+                                    {
+                                        <div class="route-feature-list">
+
+                                            @foreach (
+                                                                            var feature
+                                                                            in item.Features.Take(3))
+                                            {
+                                                <span class="route-feature-badge">
+                                                    @feature
+                                                </span>
+                                            }
+
+                                            @if (item.Features.Count > 3)
+                                            {
+                                                <span class="route-feature-badge">
+
+                                                    +@(item.Features.Count - 3)
+
+                                                </span>
+                                            }
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="route-no-data">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td>
+
+                                    <div class="route-actions">
+
+                                        <!-- UPDATE -->
+
+                                        <a asp-area="Admin"
+                                           asp-controller="Route"
+                                           asp-action="Update"
+                                           asp-route-id="@item.Id"
+                                           class="route-action">
+
+                                            Düzenle
+
+                                        </a>
+
+
+                                        <!-- DELETE -->
+
+                                        <form asp-area="Admin"
+                                              asp-controller="Route"
+                                              asp-action="Delete"
+                                              method="post"
+                                              class="route-delete-form">
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="@item.Id" />
+
+                                            <button type="submit"
+                                                    class="route-action route-action-delete"
+                                                    onclick="return confirm('@item.City rotasını silmek istediğinize emin misiniz?')">
+
+                                                Sil
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="5"
+                                class="route-empty">
+
+                                <h3>Rota bulunamadı</h3>
+
+                                <p>
+                                    Filtre kriterlerinizi değiştirip
+                                    tekrar deneyin.
+                                </p>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- PAGINATION -->
+    @if (Model.Routes.TotalPages > 1)
+    {
+        var currentPage = Model.Routes.Page;
+        var totalPages = Model.Routes.TotalPages;
+
+        var startPage =
+        Math.Max(1, currentPage - 2);
+
+        var endPage =
+        Math.Min(totalPages, currentPage + 2);
+
+
+        <div class="route-pagination">
+
+            <!-- PREVIOUS -->
+
+            <a class="route-page-link
+                          @(!Model.Routes.HasPreviousPage
+                                         ? "disabled"
+                                         : "")"
+           asp-area="Admin"
+           asp-controller="Route"
+           asp-action="Index"
+           asp-route-City="@Model.Filter.City"
+           asp-route-Country="@Model.Filter.Country"
+           asp-route-MinPrice="@Model.Filter.MinPrice"
+           asp-route-MaxPrice="@Model.Filter.MaxPrice"
+           asp-route-SortBy="@Model.Filter.SortBy"
+           asp-route-Descending="@Model.Filter.Descending"
+           asp-route-PageSize="@Model.Routes.PageSize"
+           asp-route-Page="@(currentPage - 1)">
+
+                ‹
+
+            </a>
+
+
+            <!-- FIRST PAGE -->
+        @if (startPage > 1)
+            {
+                <a class="route-page-link"
+                   asp-area="Admin"
+                   asp-controller="Route"
+                   asp-action="Index"
+                   asp-route-City="@Model.Filter.City"
+                   asp-route-Country="@Model.Filter.Country"
+                   asp-route-MinPrice="@Model.Filter.MinPrice"
+                   asp-route-MaxPrice="@Model.Filter.MaxPrice"
+                   asp-route-SortBy="@Model.Filter.SortBy"
+                   asp-route-Descending="@Model.Filter.Descending"
+                   asp-route-PageSize="@Model.Routes.PageSize"
+                   asp-route-Page="1">
+
+                    1
+
+                </a>
+
+                @if (startPage > 2)
+                {
+                    <span class="route-page-dots">
+                        ...
+                    </span>
+                }
+            }
+
+
+            <!-- CURRENT PAGE AREA -->
+            @for (var i = startPage;
+                    i <= endPage;
+                    i++)
+            {
+                <a class="route-page-link
+                                  @(i == currentPage
+                                                 ? "active"
+                                                 : "")"
+           asp-area="Admin"
+           asp-controller="Route"
+           asp-action="Index"
+           asp-route-City="@Model.Filter.City"
+           asp-route-Country="@Model.Filter.Country"
+           asp-route-MinPrice="@Model.Filter.MinPrice"
+           asp-route-MaxPrice="@Model.Filter.MaxPrice"
+           asp-route-SortBy="@Model.Filter.SortBy"
+           asp-route-Descending="@Model.Filter.Descending"
+           asp-route-PageSize="@Model.Routes.PageSize"
+           asp-route-Page="@i">
+
+                    @i
+
+                </a>
+                }
+
+
+            <!-- LAST PAGE -->
+            @if (endPage < totalPages)
+            {
+                @if (endPage < totalPages - 1)
+                {
+                    <span class="route-page-dots">
+                        ...
+                    </span>
+                }
+
+                <a class="route-page-link"
+                   asp-area="Admin"
+                   asp-controller="Route"
+                   asp-action="Index"
+                   asp-route-City="@Model.Filter.City"
+                   asp-route-Country="@Model.Filter.Country"
+                   asp-route-MinPrice="@Model.Filter.MinPrice"
+                   asp-route-MaxPrice="@Model.Filter.MaxPrice"
+                   asp-route-SortBy="@Model.Filter.SortBy"
+                   asp-route-Descending="@Model.Filter.Descending"
+                   asp-route-PageSize="@Model.Routes.PageSize"
+                   asp-route-Page="@totalPages">
+
+                    @totalPages
+
+                </a>
+            }
+
+
+        <!-- NEXT -->
+
+        <a class="route-page-link
+                      @(!Model.Routes.HasNextPage
+                                     ? "disabled"
+                                     : "")"
+           asp-area="Admin"
+           asp-controller="Route"
+           asp-action="Index"
+           asp-route-City="@Model.Filter.City"
+           asp-route-Country="@Model.Filter.Country"
+           asp-route-MinPrice="@Model.Filter.MinPrice"
+           asp-route-MaxPrice="@Model.Filter.MaxPrice"
+           asp-route-SortBy="@Model.Filter.SortBy"
+           asp-route-Descending="@Model.Filter.Descending"
+           asp-route-PageSize="@Model.Routes.PageSize"
+           asp-route-Page="@(currentPage + 1)">
+
+                ›
+
+            </a>
+
+        </div>
+        }
+
+</div>

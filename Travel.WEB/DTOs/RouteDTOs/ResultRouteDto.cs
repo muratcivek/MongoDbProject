@@ -8,5 +8,9 @@
         public string Duration { get; set; }
         public string ImageUrl { get; set; }
         public decimal Price { get; set; }
+
+        public List<string> Features { get; set; } = new();
+
+        public RouteDetailsDto Details { get; set; } = new();
     }
 }

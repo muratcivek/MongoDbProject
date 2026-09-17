@@ -1,83 +1,233 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
-using Travel.WEB.DTOs.BannerDTOs;
+using Travel.WEB.DTOs.ReviewDTOs;
 using Travel.WEB.DTOs.RouteDTOs;
+using Travel.WEB.Models.Admin;
+using Travel.WEB.Services.Review;
 using Travel.WEB.Services.Route;
 
 namespace Travel.WEB.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class RouteController(IRouteService _routeService, IMapper _mapper) : Controller
+    public class RouteController : Controller
     {
-        public async Task<IActionResult> Index()
+        private readonly IRouteService _routeService;
+        private readonly IReviewService _reviewService;
+        private readonly IMapper _mapper;
+
+        public RouteController(
+            IRouteService routeService,
+            IReviewService reviewService,
+            IMapper mapper)
         {
-            var routes = await _routeService.GetAllAsync();
-            return View(routes);
+            _routeService = routeService;
+            _reviewService = reviewService;
+            _mapper = mapper;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SearchCity(string city)
+        public async Task<IActionResult> Index(
+            [FromQuery] RouteFilterDto filter)
         {
-            if (string.IsNullOrWhiteSpace(city))
+            var routes =
+                await _routeService.GetFilteredAsync(filter);
+
+            var viewModel = new RouteIndexViewModel
             {
-                var allRoutes = await _routeService.GetAllAsync();
-                return View("Index", allRoutes);
-            }
+                Filter = filter,
+                Routes = routes
+            };
 
-            var routes = await _routeService.GetAllByCityAsync(city);
-
-            if (routes.Count == 0)
-            {
-                routes = await _routeService.GetAllAsync();
-            }
-
-            return View("Index", routes);
+            return View(viewModel);
         }
 
         public IActionResult Create()
         {
-            return View();
+            return View(new CreateRouteDto());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateRouteDto createRouteDto)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(
+            CreateRouteDto createRouteDto)
         {
             if (!ModelState.IsValid)
             {
                 return View(createRouteDto);
             }
+
             await _routeService.CreateAsync(createRouteDto);
 
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> Update(string id)
-        {
-            var route = await _routeService.GetByIdAsync(id);
-            if (route == null) return NotFound();
-            var updateRouteDto = _mapper.Map<UpdateRouteDto>(route);
-            return View(updateRouteDto);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Update(UpdateRouteDto updateRouteDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(updateRouteDto);
-            }
-            await _routeService.UpdateAsync(updateRouteDto);
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> Delete(string id)
-        {
-
-            await _routeService.DeleteAsync(id);
+            TempData["RouteSuccess"] =
+                "Rota başarıyla oluşturuldu.";
 
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Update(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest();
+            }
+
+            var route =
+                await _routeService.GetByIdAsync(id);
+
+            if (route == null)
+            {
+                return NotFound();
+            }
+
+            var routeDto =
+                _mapper.Map<UpdateRouteDto>(route);
+
+            var reviews =
+                await _reviewService.GetByRouteIdAsync(id);
+
+            var viewModel = new RouteUpdateViewModel
+            {
+                Route = routeDto,
+                Reviews = reviews
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update(
+      RouteUpdateViewModel viewModel)
+        {
+            if (viewModel.Route == null ||
+                string.IsNullOrWhiteSpace(viewModel.Route.Id))
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                viewModel.Reviews =
+                    await _reviewService.GetByRouteIdAsync(
+                        viewModel.Route.Id);
+
+                return View(viewModel);
+            }
+
+            await _routeService.UpdateAsync(
+                viewModel.Route);
+
+            TempData["RouteSuccess"] =
+                "Rota başarıyla güncellendi.";
+
+            return RedirectToAction(
+                nameof(Update),
+                new
+                {
+                    id = viewModel.Route.Id
+                });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest();
+            }
+
+            var route =
+                await _routeService.GetByIdAsync(id);
+
+            if (route == null)
+            {
+                return NotFound();
+            }
+
+            await _routeService.DeleteAsync(id);
+
+            TempData["RouteSuccess"] =
+                "Rota başarıyla silindi.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddFeature(
+            string id,
+            string feature)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest();
+            }
+
+            if (string.IsNullOrWhiteSpace(feature))
+            {
+                TempData["RouteError"] =
+                    "Özellik boş bırakılamaz.";
+
+                return RedirectToAction(
+                    nameof(Update),
+                    new { id });
+            }
+
+            var route =
+                await _routeService.GetByIdAsync(id);
+
+            if (route == null)
+            {
+                return NotFound();
+            }
+
+            await _routeService.AddFeatureAsync(
+                id,
+                feature.Trim());
+
+            TempData["RouteSuccess"] =
+                "Özellik başarıyla eklendi.";
+
+            return RedirectToAction(
+                nameof(Update),
+                new { id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveFeature(
+            string id,
+            string feature)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest();
+            }
+
+            if (string.IsNullOrWhiteSpace(feature))
+            {
+                return BadRequest();
+            }
+
+            var route =
+                await _routeService.GetByIdAsync(id);
+
+            if (route == null)
+            {
+                return NotFound();
+            }
+
+            await _routeService.RemoveFeatureAsync(
+                id,
+                feature);
+
+            TempData["RouteSuccess"] =
+                "Özellik kaldırıldı.";
+
+            return RedirectToAction(
+                nameof(Update),
+                new { id });
+        }
     }
 }

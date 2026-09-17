@@ -1,0 +1,178 @@
+﻿@model Travel.WEB.Models.Admin.ReservationDayViewModel
+
+@{
+    ViewData["Title"] = "Günlük Tur Katılımcıları";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="reservation-page">
+
+    <div class="reservation-header">
+
+        <div>
+
+            <h1>
+                @Model.Date.ToString("dd.MM.yyyy")
+            </h1>
+
+            <p>
+                Bu tarihte turlara katılacak kişiler.
+            </p>
+
+        </div>
+
+
+        <a asp-area="Admin"
+           asp-controller="Reservation"
+           asp-action="Calendar"
+           asp-route-year="@Model.Date.Year"
+           asp-route-month="@Model.Date.Month"
+           class="reservation-btn">
+
+            ← Takvime Dön
+
+        </a>
+
+    </div>
+
+
+    <div class="reservation-summary">
+
+        <div class="reservation-summary-card">
+
+            <div class="reservation-summary-label">
+                Rezervasyon
+            </div>
+
+            <div class="reservation-summary-value">
+                @Model.Items.Count
+            </div>
+
+        </div>
+
+
+        <div class="reservation-summary-card">
+
+            <div class="reservation-summary-label">
+                Toplam Katılımcı
+            </div>
+
+            <div class="reservation-summary-value">
+
+                @Model.Items.Sum(
+                x => x.Reservation.PersonCount)
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="reservation-card">
+
+        <div class="reservation-table-wrapper">
+
+            <table class="reservation-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Tur</th>
+                        <th>Katılımcı</th>
+                        <th>İletişim</th>
+                        <th>Kişi</th>
+                        <th>Durum</th>
+                        <th>Kod</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @foreach (var item in Model.Items)
+                    {
+                        var reservation =
+                        item.Reservation;
+
+
+                        <tr>
+
+                            <td>
+
+                                @if (item.Route != null)
+                                {
+                                    <div class="reservation-route">
+
+                                        @item.Route.City
+
+                                    </div>
+
+                                    <div class="reservation-country">
+
+                                        @item.Route.Country
+
+                                    </div>
+                                }
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="reservation-user">
+
+                                    @reservation.FullName
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div>
+                                    @reservation.Email
+                                </div>
+
+                                <div class="reservation-email">
+                                    @reservation.Phone
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                @reservation.PersonCount kişi
+
+                            </td>
+
+
+                            <td>
+
+                                @reservation.Status
+
+                            </td>
+
+
+                            <td>
+
+                                @reservation.ReservationCode
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

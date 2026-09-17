@@ -1,0 +1,846 @@
+﻿/* =========================================================
+   TRAVEL ADMIN - ROUTE MODULE
+   ========================================================= */
+
+.route-page {
+    width: 100%;
+    min-height: 100%;
+    padding: 30px;
+    background: #f6f8fc;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.route-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.route-header-content h1 {
+    margin: 0 0 6px;
+    color: #111827;
+    font-size: 27px;
+    font-weight: 750;
+    letter-spacing: -0.5px;
+}
+
+.route-header-content p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.route-btn {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0 17px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .18s ease;
+}
+
+.route-btn-primary {
+    background: #111827;
+    border-color: #111827;
+    color: #fff;
+}
+
+    .route-btn-primary:hover {
+        background: #1f2937;
+        border-color: #1f2937;
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+.route-btn-secondary {
+    background: #fff;
+    border-color: #dfe3ea;
+    color: #374151;
+}
+
+    .route-btn-secondary:hover {
+        background: #f9fafb;
+        color: #111827;
+    }
+
+.route-btn-danger {
+    background: #fff;
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+    .route-btn-danger:hover {
+        background: #fef2f2;
+        border-color: #fca5a5;
+        color: #b91c1c;
+    }
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.route-card {
+    margin-bottom: 22px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e5e9f0;
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .02), 0 8px 24px rgba(16, 24, 40, .035);
+}
+
+.route-card-header {
+    padding: 22px 24px 0;
+}
+
+    .route-card-header h2 {
+        margin: 0 0 5px;
+        color: #111827;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .route-card-header p {
+        margin: 0;
+        color: #8a94a6;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+.route-card-body {
+    padding: 23px 24px 24px;
+}
+
+
+/* =========================================================
+   FORMS
+   ========================================================= */
+
+.route-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 19px;
+}
+
+.route-form-group {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.route-form-group-full {
+    grid-column: 1 / -1;
+}
+
+.route-label {
+    color: #374151;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.route-input,
+.route-select,
+.route-textarea {
+    width: 100%;
+    outline: none;
+    background: #fff;
+    color: #111827;
+    border: 1px solid #d8dee8;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.route-input,
+.route-select {
+    height: 44px;
+    padding: 0 13px;
+}
+
+.route-textarea {
+    min-height: 120px;
+    padding: 12px 13px;
+    resize: vertical;
+}
+
+    .route-input::placeholder,
+    .route-textarea::placeholder {
+        color: #adb5bd;
+    }
+
+    .route-input:focus,
+    .route-select:focus,
+    .route-textarea:focus {
+        border-color: #6b7280;
+        box-shadow: 0 0 0 3px rgba(17, 24, 39, .06);
+    }
+
+.route-validation {
+    color: #dc2626;
+    font-size: 12px;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+.route-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+
+/* =========================================================
+   CREATE FEATURE OPTIONS
+   ========================================================= */
+
+.route-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 11px;
+}
+
+.route-feature-option {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    background: #fff;
+    border: 1px solid #e0e5ec;
+    border-radius: 11px;
+    color: #4b5563;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .18s ease;
+}
+
+    .route-feature-option:hover {
+        background: #fafbfc;
+        border-color: #aeb7c4;
+    }
+
+    .route-feature-option:has(input:checked) {
+        background: #f4f6f8;
+        border-color: #111827;
+        color: #111827;
+        font-weight: 650;
+    }
+
+    .route-feature-option input {
+        width: 16px;
+        height: 16px;
+        accent-color: #111827;
+    }
+
+
+/* =========================================================
+   FEATURE BADGES
+   ========================================================= */
+
+.route-feature-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.route-feature-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    padding: 5px 11px;
+    background: #f5f6f8;
+    color: #374151;
+    border: 1px solid #e1e5eb;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 550;
+}
+
+    .route-feature-badge form {
+        display: flex;
+        margin: 0;
+    }
+
+.route-feature-remove {
+    width: 19px;
+    height: 19px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    color: #9ca3af;
+    border: 0;
+    border-radius: 50%;
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+    .route-feature-remove:hover {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+.route-feature-add {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+    .route-feature-add .route-input {
+        max-width: 380px;
+    }
+
+
+/* =========================================================
+   FILTER
+   ========================================================= */
+
+.route-filter-grid {
+    display: grid;
+    grid-template-columns: minmax(150px, 1.5fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(120px, 1fr) minmax(130px, 1fr) minmax(120px, .8fr);
+    gap: 13px;
+    align-items: end;
+}
+
+.route-filter-actions {
+    display: flex;
+    gap: 9px;
+    margin-top: 18px;
+}
+
+
+/* =========================================================
+   RESULTS
+   ========================================================= */
+
+.route-result-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px 2px 12px;
+    color: #7c8798;
+    font-size: 12px;
+}
+
+    .route-result-bar strong {
+        color: #374151;
+    }
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.route-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.route-table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+    .route-table th {
+        padding: 14px 18px;
+        background: #fbfcfd;
+        color: #6b7280;
+        border-bottom: 1px solid #e7eaf0;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+
+    .route-table td {
+        padding: 15px 18px;
+        color: #374151;
+        border-bottom: 1px solid #edf0f4;
+        vertical-align: middle;
+        font-size: 13px;
+    }
+
+    .route-table tbody tr {
+        transition: background .15s ease;
+    }
+
+        .route-table tbody tr:hover {
+            background: #fafbfc;
+        }
+
+        .route-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+
+/* ROUTE INFO */
+
+.route-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.route-image {
+    width: 64px;
+    height: 50px;
+    flex-shrink: 0;
+    object-fit: cover;
+    background: #f3f4f6;
+    border-radius: 9px;
+}
+
+.route-city {
+    color: #111827;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.route-country {
+    margin-top: 3px;
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.route-price {
+    color: #111827;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.route-duration {
+    display: inline-flex;
+    padding: 6px 9px;
+    background: #f3f4f6;
+    color: #4b5563;
+    border-radius: 7px;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   TABLE ACTIONS
+   ========================================================= */
+
+.route-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+}
+
+.route-action {
+    min-height: 33px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 11px;
+    background: #fff;
+    color: #374151;
+    border: 1px solid #dfe3e9;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+    .route-action:hover {
+        background: #f8fafc;
+        color: #111827;
+    }
+
+.route-action-delete {
+    color: #dc2626;
+}
+
+    .route-action-delete:hover {
+        background: #fff5f5;
+        color: #b91c1c;
+    }
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.route-empty {
+    padding: 55px 20px !important;
+    text-align: center;
+}
+
+    .route-empty h3 {
+        margin: 0 0 6px;
+        color: #111827;
+        font-size: 16px;
+    }
+
+    .route-empty p {
+        margin: 0;
+        color: #9ca3af;
+        font-size: 13px;
+    }
+
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+
+.route-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.route-page-link {
+    min-width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    background: #fff;
+    color: #4b5563;
+    border: 1px solid #dfe3e9;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 12px;
+    transition: all .15s ease;
+}
+
+    .route-page-link:hover {
+        background: #f4f6f8;
+        color: #111827;
+    }
+
+    .route-page-link.active {
+        background: #111827;
+        border-color: #111827;
+        color: #fff;
+    }
+
+    .route-page-link.disabled {
+        opacity: .4;
+        pointer-events: none;
+    }
+
+.route-page-dots {
+    min-width: 28px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   REVIEWS
+   ========================================================= */
+
+.review-summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.review-count {
+    padding: 5px 10px;
+    background: #f3f4f6;
+    color: #4b5563;
+    border-radius: 999px;
+    font-size: 12px;
+}
+
+.review-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.review-item {
+    padding: 18px 0;
+    border-bottom: 1px solid #edf0f4;
+}
+
+    .review-item:first-child {
+        padding-top: 0;
+    }
+
+    .review-item:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+
+.review-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.review-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.review-avatar {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #111827;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.review-user-name {
+    color: #111827;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.review-date {
+    display: block;
+    margin-top: 2px;
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.review-rating {
+    display: flex;
+    gap: 2px;
+    color: #d1d5db;
+    font-size: 16px;
+}
+
+.review-star-active {
+    color: #f59e0b;
+}
+
+.review-comment {
+    margin: 12px 0 14px 48px;
+    color: #4b5563;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.review-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+/* =========================================================
+   INFO BOX
+   ========================================================= */
+
+.route-info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    margin-bottom: 20px;
+    padding: 13px 15px;
+    background: #f8fafc;
+    border: 1px solid #e5e9ef;
+    border-radius: 10px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+    .route-info-box strong {
+        color: #374151;
+    }
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .route-filter-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 850px) {
+
+    .route-page {
+        padding: 20px;
+    }
+
+    .route-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .route-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .route-form-group-full {
+        grid-column: auto;
+    }
+
+    .route-features-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .route-filter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .route-page {
+        padding: 15px;
+    }
+
+    .route-card-header {
+        padding: 18px 18px 0;
+    }
+
+    .route-card-body {
+        padding: 18px;
+    }
+
+    .route-features-grid,
+    .route-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .route-form-actions,
+    .route-filter-actions,
+    .route-feature-add {
+        flex-direction: column;
+    }
+
+        .route-form-actions .route-btn,
+        .route-filter-actions .route-btn,
+        .route-feature-add .route-btn {
+            width: 100%;
+        }
+
+        .route-feature-add .route-input {
+            max-width: none;
+        }
+
+    .review-header {
+        flex-direction: column;
+    }
+
+    .review-comment {
+        margin-left: 0;
+    }
+}
+/* =========================================================
+   ALERTS
+   ========================================================= */
+
+.route-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 13px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 550;
+}
+
+.route-alert-success {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.route-alert-danger {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+
+/* FILTER BOTTOM */
+
+.route-filter-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 18px;
+}
+
+.route-page-size {
+    width: 150px;
+}
+
+
+/* TABLE */
+
+.route-no-data {
+    color: #a0a8b5;
+}
+
+.route-delete-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .route-filter-bottom {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .route-page-size {
+        width: 100%;
+    }
+}

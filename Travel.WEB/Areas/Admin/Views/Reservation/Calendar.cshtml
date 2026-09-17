@@ -1,0 +1,220 @@
+﻿@using System.Globalization
+@model Travel.WEB.Models.Admin.ReservationCalendarViewModel
+
+@{
+    ViewData["Title"] = "Tur Takvimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+
+    var firstDay =
+        new DateTime(
+            Model.Year,
+            Model.Month,
+            1);
+
+    var daysInMonth =
+        DateTime.DaysInMonth(
+            Model.Year,
+            Model.Month);
+
+    // Pazartesi = 0 olacak şekilde ayarlıyoruz
+    var firstDayOffset =
+        ((int)firstDay.DayOfWeek + 6) % 7;
+
+    var previousMonth =
+        firstDay.AddMonths(-1);
+
+    var nextMonth =
+        firstDay.AddMonths(1);
+
+    var culture =
+        new CultureInfo("tr-TR");
+
+    var monthTitle =
+        firstDay.ToString(
+            "MMMM yyyy",
+            culture);
+
+    var dayNames = new[]
+    {
+        "Pzt",
+        "Sal",
+        "Çar",
+        "Per",
+        "Cum",
+        "Cmt",
+        "Paz"
+    };
+}
+
+
+<div class="reservation-page">
+
+    <div class="reservation-header">
+
+        <div>
+
+            <h1>
+                Tur Takvimi
+            </h1>
+
+            <p>
+                Rezervasyonları seyahat tarihlerine
+                göre görüntüleyin.
+            </p>
+
+        </div>
+
+
+        <a asp-area="Admin"
+           asp-controller="Reservation"
+           asp-action="Index"
+           class="reservation-btn">
+
+            Liste Görünümü
+
+        </a>
+
+    </div>
+
+
+    <div class="reservation-card"
+         style="padding:20px;">
+
+        <div class="reservation-calendar-header">
+
+            <div class="reservation-calendar-navigation">
+
+                <a asp-action="Calendar"
+                   asp-route-year="@previousMonth.Year"
+                   asp-route-month="@previousMonth.Month"
+                   class="reservation-btn">
+
+                    ‹
+
+                </a>
+
+            </div>
+
+
+            <div class="reservation-calendar-title">
+
+                @monthTitle
+
+            </div>
+
+
+            <div class="reservation-calendar-navigation">
+
+                <a asp-action="Calendar"
+                   asp-route-year="@nextMonth.Year"
+                   asp-route-month="@nextMonth.Month"
+                   class="reservation-btn">
+
+                    ›
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="reservation-calendar-wrapper">
+
+            <div class="reservation-calendar">
+
+                @foreach (var dayName in dayNames)
+                {
+                    <div class="reservation-calendar-day-name">
+                        @dayName
+                    </div>
+                }
+
+
+                @for (var i = 0;
+                                i < firstDayOffset;
+                                i++)
+                {
+                    <div class="
+                            reservation-calendar-cell
+                            reservation-calendar-cell-empty">
+                    </div>
+                }
+
+
+                @for (var day = 1;
+                                day <= daysInMonth;
+                                day++)
+                {
+                    var currentDate =
+                    new DateTime(
+                    Model.Year,
+                    Model.Month,
+                    day);
+
+                    var events =
+                    Model.Items
+                    .Where(x =>
+                    x.TravelDate.Date ==
+                    currentDate.Date)
+                    .ToList();
+
+                    var isToday =
+                    currentDate.Date ==
+                    DateTime.Today;
+
+
+                    <div class="reservation-calendar-cell">
+
+                        <div class="
+                                reservation-calendar-date
+                                @(isToday ? "today" : "")">
+
+                            @day
+
+                        </div>
+
+
+                        <div class="reservation-calendar-events">
+
+                            @foreach (var item in events)
+                            {
+                                <a asp-area="Admin"
+                                   asp-controller="Reservation"
+                                   asp-action="Day"
+                                   asp-route-date="@currentDate.ToString("yyyy-MM-dd")"
+                                   class="reservation-calendar-event">
+
+                                    <strong>
+                                        @item.City
+                                    </strong>
+
+                                    <div class="
+                                                reservation-calendar-event-meta">
+
+                                        @item.ReservationCount rezervasyon
+
+                                    </div>
+
+                                    <div class="
+                                                reservation-calendar-event-meta">
+
+                                        @item.PersonCount kişi
+
+                                    </div>
+
+                                </a>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

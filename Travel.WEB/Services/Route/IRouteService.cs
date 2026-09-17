@@ -1,4 +1,5 @@
-﻿using Travel.WEB.DTOs.RouteDTOs;
+﻿using Travel.WEB.DTOs.Common;
+using Travel.WEB.DTOs.RouteDTOs;
 
 namespace Travel.WEB.Services.Route
 {
@@ -10,5 +11,10 @@ namespace Travel.WEB.Services.Route
         Task CreateAsync(CreateRouteDto createRouteDto);
         Task UpdateAsync(UpdateRouteDto updateRouteDto);
         Task DeleteAsync(string id);
+        Task<PagedResultDto<ResultRouteDto>> GetFilteredAsync(
+    RouteFilterDto filterDto);
+        Task CreateIndexesAsync();
+        Task AddFeatureAsync(string routeId, string feature);
+        Task RemoveFeatureAsync(string routeId, string feature);
     }
 }

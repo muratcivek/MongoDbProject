@@ -1,0 +1,406 @@
+﻿@model List<Travel.WEB.Models.Admin.ReservationListItemViewModel>
+
+@{
+    ViewData["Title"] = "Rezervasyonlar";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+
+    var total = Model.Count;
+
+    var pending =
+        Model.Count(x =>
+            x.Reservation.Status == "Pending");
+
+    var approved =
+        Model.Count(x =>
+            x.Reservation.Status == "Approved");
+
+    var cancelled =
+        Model.Count(x =>
+            x.Reservation.Status == "Cancelled");
+}
+
+
+<div class="reservation-page">
+
+    <div class="reservation-header">
+
+        <div>
+
+            <h1>
+                Rezervasyonlar
+            </h1>
+
+            <p>
+                Tur rezervasyonlarını görüntüleyin
+                ve durumlarını yönetin.
+            </p>
+
+        </div>
+
+        <a asp-area="Admin"
+           asp-controller="Reservation"
+           asp-action="Calendar"
+           class="reservation-btn">
+
+            <i class="bi bi-calendar3"></i>
+
+            Takvim Görünümü
+
+        </a>
+
+    </div>
+
+    @if (TempData["ReservationSuccess"] != null)
+    {
+        <div class="reservation-alert">
+
+            @TempData["ReservationSuccess"]
+
+        </div>
+    }
+
+
+    <!-- SUMMARY -->
+
+    <div class="reservation-summary">
+
+        <div class="reservation-summary-card">
+
+            <div class="reservation-summary-label">
+                Toplam
+            </div>
+
+            <div class="reservation-summary-value">
+                @total
+            </div>
+
+        </div>
+
+
+        <div class="reservation-summary-card">
+
+            <div class="reservation-summary-label">
+                Bekliyor
+            </div>
+
+            <div class="reservation-summary-value">
+                @pending
+            </div>
+
+        </div>
+
+
+        <div class="reservation-summary-card">
+
+            <div class="reservation-summary-label">
+                Onaylandı
+            </div>
+
+            <div class="reservation-summary-value">
+                @approved
+            </div>
+
+        </div>
+
+
+        <div class="reservation-summary-card">
+
+            <div class="reservation-summary-label">
+                İptal
+            </div>
+
+            <div class="reservation-summary-value">
+                @cancelled
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="reservation-card">
+
+        <div class="reservation-table-wrapper">
+
+            <table class="reservation-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Müşteri
+                        </th>
+
+                        <th>
+                            Tur
+                        </th>
+
+                        <th>
+                            Seyahat Tarihi
+                        </th>
+
+                        <th>
+                            Kişi
+                        </th>
+
+                        <th>
+                            Durum
+                        </th>
+
+                        <th>
+                            Oluşturulma
+                        </th>
+
+                        <th>
+                            İşlemler
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            var reservation =
+                            item.Reservation;
+
+                            var statusClass =
+                            reservation.Status switch
+                            {
+                                "Approved" =>
+                                            "reservation-status-approved",
+
+                                "Cancelled" =>
+                                            "reservation-status-cancelled",
+
+                                _ =>
+                                            "reservation-status-pending"
+                            };
+
+
+                            var statusText =
+                            reservation.Status switch
+                            {
+                                "Approved" => "Onaylandı",
+                                "Cancelled" => "İptal",
+                                _ => "Bekliyor"
+                            };
+
+
+                            <tr>
+
+                                <!-- CUSTOMER -->
+
+                                <td>
+
+                                    <div class="reservation-user">
+                                        @reservation.FullName
+                                    </div>
+
+                                    <div class="reservation-email">
+                                        @reservation.Email
+                                    </div>
+
+                                    <div class="reservation-email">
+                                        @reservation.Phone
+                                    </div>
+
+                                </td>
+
+
+                                <!-- TOUR -->
+
+                                <td>
+
+                                    @if (item.Route != null)
+                                    {
+                                        <div class="reservation-route">
+                                            @item.Route.City
+                                        </div>
+
+                                        <div class="reservation-country">
+                                            @item.Route.Country
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Rota bulunamadı
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- DATE -->
+
+                                <td>
+                                    @(reservation.TravelDate.ToString("dd.MM.yyyy"))
+
+                                </td>
+
+
+                                <!-- PEOPLE -->
+
+                                <td>
+
+                                    @reservation.PersonCount kişi
+
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    <span class="
+                                            reservation-status
+                                            @statusClass">
+
+                                        @statusText
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- CREATED -->
+
+                            <td>
+                                @(reservation.CreatedDate
+                                                            .ToLocalTime()
+                                                            .ToString("dd.MM.yyyy HH:mm"))
+                        </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td>
+
+                                    <div class="reservation-actions">
+
+
+                                        @if (reservation.Status != "Approved")
+                                        {
+                                            <form asp-area="Admin"
+                                                  asp-controller="Reservation"
+                                                  asp-action="UpdateStatus"
+                                                  method="post"
+                                                  class="reservation-action-form">
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@reservation.Id" />
+
+                                                <input type="hidden"
+                                                       name="status"
+                                                       value="Approved" />
+
+                                                <button type="submit"
+                                                        class="
+                                                                reservation-btn
+                                                                reservation-btn-approve">
+
+                                                    Onayla
+
+                                                </button>
+
+                                            </form>
+                                        }
+
+
+                                        @if (reservation.Status != "Cancelled")
+                                        {
+                                            <form asp-area="Admin"
+                                                  asp-controller="Reservation"
+                                                  asp-action="UpdateStatus"
+                                                  method="post"
+                                                  class="reservation-action-form">
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@reservation.Id" />
+
+                                                <input type="hidden"
+                                                       name="status"
+                                                       value="Cancelled" />
+
+                                                <button type="submit"
+                                                        class="
+                                                                reservation-btn
+                                                                reservation-btn-cancel">
+
+                                                    İptal Et
+
+                                                </button>
+
+                                            </form>
+                                        }
+
+
+                                        <form asp-area="Admin"
+                                              asp-controller="Reservation"
+                                              asp-action="Delete"
+                                              method="post"
+                                              class="reservation-action-form">
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="@reservation.Id" />
+
+                                            <button type="submit"
+                                                    class="
+                                                        reservation-btn
+                                                        reservation-btn-delete"
+                                                    onclick="
+                                                        return confirm(
+                                                        'Rezervasyonu silmek istediğinize emin misiniz?'
+                                                        )">
+
+                                                Sil
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="7"
+                                style="
+                                padding:50px;
+                                text-align:center;
+                                color:#9ca3af;">
+
+                                Henüz rezervasyon bulunmuyor.
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

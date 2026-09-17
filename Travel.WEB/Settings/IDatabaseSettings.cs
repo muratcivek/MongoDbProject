@@ -6,6 +6,9 @@
         public string DatabaseName { get; set; }
         public string BannerCollectionName { get; set; }
         public string RouteCollectionName { get; set; }
+        public string ReviewCollectionName { get; set; }
+
+        string ReservationCollectionName { get; set; }
 
     }
 }

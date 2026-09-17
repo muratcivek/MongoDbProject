@@ -1,0 +1,219 @@
+﻿@model List<Travel.WEB.DTOs.ReviewDTOs.ResultReviewDto>
+
+@{
+    ViewData["Title"] = "Yorumlar";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="review-page">
+
+    <div class="review-header">
+
+        <div>
+            <h1>Yorumlar</h1>
+
+            <p>
+                Kullanıcıların tur yorumlarını görüntüleyin ve yönetin.
+            </p>
+        </div>
+
+        <div class="review-count-card">
+
+            <span class="review-count-label">
+                Toplam Yorum
+            </span>
+
+            <strong class="review-count-value">
+                @Model.Count
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    @if (TempData["ReviewSuccess"] != null)
+    {
+        <div class="review-alert">
+            @TempData["ReviewSuccess"]
+        </div>
+    }
+
+
+    <div class="review-card">
+
+        <div class="review-table-wrapper">
+
+            <table class="review-table">
+
+                <thead>
+                    <tr>
+                        <th>Kullanıcı</th>
+                        <th>Puan</th>
+                        <th>Yorum</th>
+                        <th>Tarih</th>
+                        <th class="review-actions-title">
+                            İşlem
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <div class="review-user">
+
+                                        <div class="review-avatar">
+
+                                            @(
+                                                                                string.IsNullOrWhiteSpace(item.UserName)
+                                                                                ? "?"
+                                                                                : item.UserName.Substring(0, 1).ToUpper()
+                                                                                )
+
+                                </div>
+
+                                        <div>
+
+                                            <div class="review-user-name">
+                                                @item.UserName
+                                            </div>
+
+                                            <div class="review-user-subtitle">
+                                                Kullanıcı yorumu
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="review-rating">
+
+                                        <div class="review-stars">
+
+                                    @for (var i = 1; i <= 5; i++)
+                                            {
+                                                <span class="review-star @(i <= item.Rating ? "active" : "")">
+                                                    ★
+                                                </span>
+                                            }
+
+                                </div>
+
+                                <span class="review-rating-value">
+                                    @item.Rating / 5
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="review-comment">
+                                @item.Comment
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="review-date">
+
+                                <i class="bi bi-calendar3"></i>
+
+                                @(item.CreatedDate
+                                                                .ToLocalTime()
+                                                                .ToString("dd.MM.yyyy HH:mm"))
+
+                            </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <form asp-area="Admin"
+                                          asp-controller="Review"
+                                          asp-action="Delete"
+                                          method="post"
+                                          class="review-delete-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@item.Id" />
+
+                                        <input type="hidden"
+                                               name="routeId"
+                                               value="@item.RouteId" />
+
+                                        <input type="hidden"
+                                               name="returnToList"
+                                               value="true" />
+
+                                        <button type="submit"
+                                                class="review-delete-button"
+                                                onclick="return confirm('Bu yorumu silmek istediğinize emin misiniz?')">
+
+                                            <i class="bi bi-trash3"></i>
+
+                                            Sil
+
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+                                        }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="5"
+                                class="review-empty">
+
+                                <div class="review-empty-icon">
+                                    <i class="bi bi-chat-left-text"></i>
+                                </div>
+
+                                <strong>
+                                    Henüz yorum bulunmuyor
+                                </strong>
+
+                                <span>
+                                    Kullanıcı yorumları burada görüntülenecek.
+                                </span>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
