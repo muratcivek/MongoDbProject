@@ -4,24 +4,80 @@
 
 Projenin temel amacı MongoDB'yi yalnızca CRUD seviyesinde değil; **veri modelleme, indexleme, arama, aggregation ve sorgu performansı** gibi konularla birlikte gerçek bir proje üzerinde uygulamaktır.
 
+---
+
 ## 🚀 Özellikler
 
 ### Kullanıcı Tarafı
+
 - Tur listeleme ve detay görüntüleme
 - Şehir, ülke ve fiyat bazlı filtreleme
 - MongoDB Text Search ile genel arama
 - Sayfalama ve sıralama
 - Tur değerlendirme ve yorum sistemi
 - Rezervasyon oluşturma
-- Rezervasyon kodu ile sorgulama
+- Rezervasyon kodu ve e-mail ile rezervasyon sorgulama
 
 ### Admin Paneli
+
 - Tur yönetimi
 - Banner yönetimi
 - Yorum yönetimi
 - Rezervasyon ve durum yönetimi
 - Aylık rezervasyon takvimi
 - Tarih bazlı katılımcı görüntüleme
+
+---
+
+# 🖥️ Uygulama Görselleri
+
+## Kullanıcı Tarafı
+
+### Tur Keşfet
+
+![Tur Keşfet](MongoDbProject_Gorseller/kullanici_tur_kesfet.png)
+
+### Tur Detayı
+
+![Tur Detayı](MongoDbProject_Gorseller/kullanici_tur_detay_1.png)
+
+![Tur Detayı](MongoDbProject_Gorseller/kullanici_tur_detay_2.png)
+
+### Rezervasyon Sorgulama
+
+![Rezervasyon Sorgulama](MongoDbProject_Gorseller/kullanici_rezervasyon_sorgula.png)
+
+![Rezervasyon Detayı](MongoDbProject_Gorseller/kullanici_rezervasyon_sorgula_2.png)
+
+---
+
+## Admin Paneli
+
+### Rezervasyon Yönetimi
+
+![Admin Rezervasyonlar](MongoDbProject_Gorseller/admin_rezervasyonlar.png)
+
+### Rezervasyon Takvimi
+
+![Rezervasyon Takvimi](MongoDbProject_Gorseller/admin_rezervasyonlar_takvim_gorunumu.png)
+
+### Günlük Katılımcılar
+
+![Rezervasyon Görüntüleme](MongoDbProject_Gorseller/admin_rezervasyon_goruntule.png)
+
+### Rota Yönetimi
+
+![Yeni Rota Oluştur](MongoDbProject_Gorseller/admin_yeni_rota_olustur.png)
+
+![Rota Güncelle](MongoDbProject_Gorseller/admin_rota_guncelle_1.png)
+
+![Rota Detay Güncelle](MongoDbProject_Gorseller/admin_rota_guncelle_2.png)
+
+### Yorum Yönetimi
+
+![Admin Yorumlar](MongoDbProject_Gorseller/admin_yorumlar.png)
+
+---
 
 ## 🛠️ Teknolojiler
 
@@ -33,6 +89,8 @@ Projenin temel amacı MongoDB'yi yalnızca CRUD seviyesinde değil; **veri model
 - FluentValidation
 - Razor
 - HTML / CSS
+
+---
 
 ## 🍃 MongoDB Kullanımı
 
@@ -51,6 +109,8 @@ Projede MongoDB'nin temel ve ileri seviye özellikleri uygulamalı olarak kullan
 - Explain Plan ile sorgu analizi
 - `IXSCAN` ve `COLLSCAN` karşılaştırması
 
+---
+
 ## 🗂️ Veri Modeli
 
 ```text
@@ -65,11 +125,11 @@ Route
     └── RouteId
 ```
 
-`Route` detayları ve özellikleri document içerisinde tutulurken, **Review** ve **Reservation** kendi collection'larında Route'a referans verecek şekilde modellenmiştir.
+`Route` detayları ve özellikleri document içerisinde tutulurken, **Review** ve **Reservation** kendi collection'larında `RouteId` üzerinden ilişkilendirilmiştir.
+
+---
 
 ## ⚡ Index Stratejisi
-
-Indexler uygulamadaki sorgu ihtiyaçlarına göre tasarlanmıştır.
 
 ```text
 Routes
@@ -88,9 +148,11 @@ Reservations
 └── ReservationCode (Unique)
 ```
 
-MongoDB Explain Plan kullanılarak indexli ve indexsiz sorguların `IXSCAN` / `COLLSCAN` davranışları test edilmiştir.
+MongoDB Explain Plan kullanılarak indexli ve indexsiz sorguların `IXSCAN` / `COLLSCAN` davranışları incelenmiştir.
 
-## 📊 Aggregation
+---
+
+## 📊 Aggregation Pipeline
 
 Admin rezervasyon takvimi MongoDB **Aggregation Pipeline** ile oluşturulmaktadır.
 
@@ -108,7 +170,9 @@ $project
 $sort
 ```
 
-Bu yapı ile tarih ve tur bazında rezervasyon/katılımcı istatistikleri MongoDB tarafında hesaplanmaktadır.
+Bu yapı sayesinde tarih ve tur bazında rezervasyon sayısı ve toplam katılımcı sayısı MongoDB tarafında hesaplanmaktadır.
+
+---
 
 ## 📁 Proje Yapısı
 
@@ -128,18 +192,22 @@ Travel.WEB
 └── wwwroot
 ```
 
+---
+
 ## ▶️ Çalıştırma
 
 MongoDB bağlantısını `appsettings.json` içerisinde yapılandırın:
 
 ```json
-"DatabaseSettings": {
-  "ConnectionString": "mongodb://localhost:27017",
-  "DatabaseName": "TravelDb",
-  "BannerCollectionName": "Banners",
-  "RouteCollectionName": "Routes",
-  "ReviewCollectionName": "Reviews",
-  "ReservationCollectionName": "Reservations"
+{
+  "DatabaseSettings": {
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "TravelDb",
+    "BannerCollectionName": "Banners",
+    "RouteCollectionName": "Routes",
+    "ReviewCollectionName": "Reviews",
+    "ReservationCollectionName": "Reservations"
+  }
 }
 ```
 
@@ -150,10 +218,10 @@ dotnet restore
 dotnet run
 ```
 
-> Production bağlantı bilgileri ve şifreler repository içerisinde tutulmamalıdır.
+> Gerçek kullanıcı adı, parola veya production connection string bilgilerini repository içerisinde tutmayın.
 
 ---
 
-### 🎯 Proje Amacı
+## 🎯 Proje Amacı
 
 Bu proje, **ASP.NET Core ile MongoDB entegrasyonunu ve MongoDB'nin gerçek uygulamalardaki kullanım senaryolarını** deneyimlemek amacıyla geliştirilmiştir.
